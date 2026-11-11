@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useAppStore } from "@/lib/store";
+import { formatPrice } from "@/lib/utils";
 import { DishDetailModal } from "./DishDetailModal";
-import { Plus, Minus, Star, Clock } from "lucide-react";
+import { Plus, Minus, Clock } from "lucide-react";
 
 interface MenuItem {
   id: string;
@@ -29,13 +30,14 @@ interface DishCardProps {
 export function DishCard({ item }: DishCardProps) {
   const { cart, addToCart, updateQuantity } = useAppStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const cartItem = cart.find((i) => i.id === item.id);
   const inCartCount = cartItem ? cartItem.quantity : 0;
 
   // Authentic rating simulation (e.g. 4.6, 4.8)
   const rating = ((item.name.length % 5) * 0.1 + 4.4).toFixed(1);
-  const ratingCount = (item.name.length * 12 + 45);
+  const ratingCount = item.name.length * 14 + 68;
 
   return (
     <>
@@ -72,7 +74,7 @@ export function DishCard({ item }: DishCardProps) {
           {/* Price */}
           <div className="mt-1 flex items-center gap-2">
             <span className="font-heading font-extrabold text-[#1C1C1C] text-sm tabular-nums">
-              ${item.price.toFixed(2)}
+              {formatPrice(item.price)}
             </span>
           </div>
 
@@ -105,14 +107,19 @@ export function DishCard({ item }: DishCardProps) {
         <div className="relative shrink-0 flex flex-col items-center">
           <div
             onClick={() => setIsModalOpen(true)}
-            className="relative h-28 w-36 sm:h-32 sm:w-40 cursor-pointer overflow-hidden rounded-2xl bg-[#F4F5F7] border border-[#E8E8E8]"
+            className="relative h-[120px] w-[120px] sm:h-[140px] sm:w-[140px] cursor-pointer overflow-hidden rounded-2xl bg-[#F4F5F7] border border-[#E8E8E8]"
           >
+            {imageLoading && (
+              <div className="absolute inset-0 bg-[#F4F5F7] animate-pulse rounded-2xl" />
+            )}
             <Image
               src={item.imageUrl}
               alt={item.name}
-              fill
-              sizes="160px"
-              className="object-cover transition-transform duration-300 hover:scale-105"
+              width={140}
+              height={140}
+              sizes="(max-width: 768px) 120px, 140px"
+              className="object-cover rounded-2xl w-full h-full transition-transform duration-300 hover:scale-105"
+              onLoad={() => setImageLoading(false)}
             />
           </div>
 

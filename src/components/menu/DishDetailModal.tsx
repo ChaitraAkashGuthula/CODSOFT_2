@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useAppStore } from "@/lib/store";
+import { formatPrice } from "@/lib/utils";
 import { X, Plus, Minus, Clock, Flame, Star, AlertCircle, ShoppingBag } from "lucide-react";
 
 interface MenuItem {
@@ -95,7 +96,7 @@ export function DishDetailModal({ item, onClose }: DishDetailModalProps) {
                 {item.name}
               </h2>
               <span className="font-heading text-xl font-extrabold text-[#1C1C1C] tabular-nums shrink-0">
-                ${item.price.toFixed(2)}
+                {formatPrice(item.price)}
               </span>
             </div>
 
@@ -168,7 +169,7 @@ export function DishDetailModal({ item, onClose }: DishDetailModalProps) {
             >
               <ShoppingBag className="h-4 w-4" />
               <span>
-                {item.isAvailable ? `Add item • $${totalPrice}` : "Currently Unavailable"}
+                {item.isAvailable ? `Add item • ${formatPrice(item.price * quantity)}` : "Currently Unavailable"}
               </span>
             </button>
           </div>

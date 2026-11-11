@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { formatPrice } from "@/lib/utils";
 import {
   Clock,
   CheckCircle2,
@@ -366,7 +367,7 @@ function TrackerContent() {
                     </div>
                   </div>
                   <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
-                    ${(item.unitPrice * item.quantity).toFixed(2)}
+                    {formatPrice(item.unitPrice * item.quantity)}
                   </span>
                 </div>
               ))}
@@ -377,25 +378,25 @@ function TrackerContent() {
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
-                  ${order.subtotal.toFixed(2)}
+                  {formatPrice(order.subtotal)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Taxes & Charges (8%)</span>
                 <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
-                  ${order.tax.toFixed(2)}
+                  {formatPrice(order.tax)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Staff Tip</span>
                 <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
-                  ${order.tip.toFixed(2)}
+                  {formatPrice(order.tip)}
                 </span>
               </div>
               <div className="flex justify-between font-extrabold text-sm text-[#1C1C1C] pt-2 border-t border-[#E8E8E8]">
                 <span>Total Bill Settled</span>
                 <span className="font-mono text-[#0F8A65] text-base tabular-nums">
-                  ${order.total.toFixed(2)}
+                  {formatPrice(order.total)}
                 </span>
               </div>
             </div>

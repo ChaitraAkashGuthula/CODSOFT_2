@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { DishCard } from "@/components/menu/DishCard";
 import { useAppStore } from "@/lib/store";
+import { formatPrice } from "@/lib/utils";
 import {
   Utensils,
   Search,
@@ -129,7 +130,7 @@ export default function MenuPage() {
             </span>
           </div>
           <p className="text-xs text-[#686B78] font-medium">
-            Artisanal appetizers, charcoal grilled mains, handcrafted pastry desserts & beverages.
+            Royal dum biryanis, sourdough pizzas, smash burgers, tandoori kebabs, thickshakes & desserts.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-semibold text-[#1C1C1C]">
             <span className="flex items-center gap-1 text-[#24963F]">
@@ -314,7 +315,7 @@ export default function MenuPage() {
                   {cartCount} {cartCount === 1 ? "ITEM" : "ITEMS"} ADDED
                 </span>
                 <p className="font-mono text-xs font-semibold tabular-nums text-white/90">
-                  Total: ${cartTotal.toFixed(2)} plus taxes
+                  Total: {formatPrice(cartTotal)} plus taxes
                 </p>
               </div>
             </div>

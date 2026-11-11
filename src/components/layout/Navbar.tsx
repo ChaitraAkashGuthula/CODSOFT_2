@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppStore, RoleType } from "@/lib/store";
+import { formatPrice } from "@/lib/utils";
 import {
   Search,
   ShoppingBag,
@@ -250,7 +251,7 @@ export function Navbar() {
           >
             <ShoppingBag className="h-4 w-4" />
             <span className="tabular-nums font-mono">
-              {cartCount > 0 ? `${cartCount} | $${cartSubtotal.toFixed(2)}` : "Cart"}
+              {cartCount > 0 ? `${cartCount} | ${formatPrice(cartSubtotal)}` : "Cart"}
             </span>
           </button>
         </div>

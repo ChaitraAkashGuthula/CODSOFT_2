@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils";
 import {
   SlidersHorizontal,
   DollarSign,
@@ -321,7 +322,7 @@ export default function AdminPage() {
                 <DollarSign className="h-4 w-4 text-[#0F8A65]" />
               </div>
               <div className="mt-2 text-2xl font-heading font-extrabold text-[#1C1C1C] tabular-nums">
-                ${metrics?.totalRevenue ? metrics.totalRevenue.toFixed(2) : "370.60"}
+                {formatPrice(metrics?.totalRevenue || 0)}
               </div>
               <span className="text-xs font-bold text-[#0F8A65] flex items-center gap-1 mt-1">
                 <TrendingUp className="h-3.5 w-3.5" /> +18.4% from yesterday
@@ -392,7 +393,7 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <span className="font-mono font-bold text-[#0F8A65] text-sm tabular-nums">
-                    ${dish.revenue.toFixed(2)}
+                    {formatPrice(dish.revenue)}
                   </span>
                 </div>
               ))}
@@ -457,7 +458,7 @@ export default function AdminPage() {
                     </td>
                     <td className="p-3 text-[#686B78] font-medium">{item.category?.name}</td>
                     <td className="p-3 font-mono font-bold text-[#1C1C1C] tabular-nums">
-                      ${item.price.toFixed(2)}
+                      {formatPrice(item.price)}
                     </td>
                     <td className="p-3">
                       <div className="flex gap-1 text-[10px]">
@@ -553,14 +554,14 @@ export default function AdminPage() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[#686B78] font-bold mb-1">Price ($)</label>
+                      <label className="block text-[#686B78] font-bold mb-1">Price (₹)</label>
                       <input
                         type="number"
-                        step="0.01"
+                        step="1"
                         required
                         value={newDishPrice}
                         onChange={(e) => setNewDishPrice(e.target.value)}
-                        placeholder="14.50"
+                        placeholder="349"
                         className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5 font-mono"
                       />
                     </div>

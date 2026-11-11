@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useAppStore } from "@/lib/store";
+import { formatPrice } from "@/lib/utils";
 import { CheckoutModal } from "./CheckoutModal";
 import {
   X,
@@ -186,7 +187,7 @@ export function CartDrawer() {
                         {item.name}
                       </h4>
                       <p className="font-mono text-xs font-bold text-[#1C1C1C] tabular-nums mt-0.5">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatPrice(item.price * item.quantity)}
                       </p>
                       {item.customInstructions && (
                         <p className="mt-0.5 text-[11px] text-[#686B78] italic line-clamp-1">
@@ -249,7 +250,7 @@ export function CartDrawer() {
                   <div className="flex items-center justify-between text-xs text-[#686B78] mb-1.5 font-medium">
                     <span>Add Delivery / Restaurant Tip:</span>
                     <span className="font-bold text-[#1C1C1C] tabular-nums">
-                      ${tip.toFixed(2)} ({tipPercentage}%)
+                      {formatPrice(tip)} ({tipPercentage}%)
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -274,25 +275,25 @@ export function CartDrawer() {
                   <div className="flex justify-between">
                     <span>Item Total</span>
                     <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
-                      ${subtotal.toFixed(2)}
+                      {formatPrice(subtotal)}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Taxes & Restaurant Charges (8%)</span>
                     <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
-                      ${tax.toFixed(2)}
+                      {formatPrice(tax)}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Staff Tip</span>
                     <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
-                      ${tip.toFixed(2)}
+                      {formatPrice(tip)}
                     </span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-[#E8E8E8] text-sm font-extrabold text-[#1C1C1C]">
                     <span>To Pay</span>
                     <span className="font-mono text-[#0F8A65] text-base tabular-nums">
-                      ${total.toFixed(2)}
+                      {formatPrice(total)}
                     </span>
                   </div>
                 </div>
@@ -302,7 +303,7 @@ export function CartDrawer() {
                   onClick={() => setIsCheckoutOpen(true)}
                   className="w-full flex items-center justify-between rounded-xl bg-[#0F8A65] hover:bg-[#0c7354] px-5 py-3.5 text-sm font-extrabold text-white shadow-btn transition active:scale-95"
                 >
-                  <span className="tabular-nums font-mono">${total.toFixed(2)}</span>
+                  <span className="tabular-nums font-mono">{formatPrice(total)}</span>
                   <span className="flex items-center gap-1">
                     <span>Proceed to Pay</span>
                     <ArrowRight className="h-4 w-4" />

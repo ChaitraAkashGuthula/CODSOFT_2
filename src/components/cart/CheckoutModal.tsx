@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store";
+import { formatPrice } from "@/lib/utils";
 import { playSuccessChime } from "@/lib/audio";
 import confetti from "canvas-confetti";
 import {
@@ -172,7 +173,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <div className="flex justify-between text-[#686B78] pt-2 border-t border-[#E8E8E8] font-bold">
                   <span className="text-[#1C1C1C]">Total Paid:</span>
                   <span className="text-[#0F8A65] text-sm tabular-nums font-mono font-extrabold">
-                    ${createdOrder.total.toFixed(2)}
+                    {formatPrice(createdOrder.total)}
                   </span>
                 </div>
               </div>
@@ -272,7 +273,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     <span>Processing Payment...</span>
                   </>
                 ) : (
-                  <span>Pay ${total.toFixed(2)}</span>
+                  <span>Pay {formatPrice(total)}</span>
                 )}
               </button>
             </form>
