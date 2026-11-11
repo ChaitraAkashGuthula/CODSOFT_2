@@ -106,7 +106,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     if (createdOrder) {
       onClose();
       setIsCartOpen(false);
-      router.push(`/tracker?orderId=${createdOrder.orderNumber}`);
+      router.push(`/track/${createdOrder.orderNumber}`);
     }
   };
 
