@@ -5,14 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppStore, RoleType } from "@/lib/store";
 import {
-  UtensilsCrossed,
+  Search,
   ShoppingBag,
   CalendarDays,
   ChefHat,
-  LayoutDashboard,
+  SlidersHorizontal,
   Clock,
   ChevronDown,
-  UserCheck,
+  User,
+  Utensils,
+  MapPin,
 } from "lucide-react";
 
 export function Navbar() {
@@ -25,120 +27,192 @@ export function Navbar() {
     currentRole,
     setCurrentRole,
     selectedTableNumber,
+    orderType,
+    setOrderType,
+    searchQuery,
+    setSearchQuery,
   } = useAppStore();
 
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+  const [tableMenuOpen, setTableMenuOpen] = useState(false);
 
   const cartCount = getCartCount();
   const cartSubtotal = getCartSubtotal();
 
   const navLinks = [
-    { href: "/", label: "Digital Menu", icon: UtensilsCrossed },
-    { href: "/reservations", label: "Book Table", icon: CalendarDays },
-    { href: "/tracker", label: "Live Tracker", icon: Clock },
+    { href: "/", label: "Menu", icon: Utensils },
+    { href: "/reservations", label: "Book a Table", icon: CalendarDays },
+    { href: "/tracker", label: "Track Order", icon: Clock },
     { href: "/kds", label: "Kitchen KDS", icon: ChefHat, badge: "Live" },
-    { href: "/admin", label: "Management", icon: LayoutDashboard },
+    { href: "/admin", label: "Admin", icon: SlidersHorizontal },
   ];
 
-  const roles: { id: RoleType; label: string; desc: string; iconColor: string }[] = [
+  const roles: { id: RoleType; label: string; desc: string }[] = [
     {
       id: "CUSTOMER",
-      label: "Guest / Customer",
-      desc: "Browsing, ordering, table tracking",
-      iconColor: "text-amber-400",
+      label: "Customer / Diner",
+      desc: "Menu ordering & live tracking",
     },
     {
       id: "KITCHEN_STAFF",
-      label: "Kitchen Brigade (KDS)",
-      desc: "Line cooks & sous chefs",
-      iconColor: "text-rose-400",
+      label: "Kitchen Staff (KDS)",
+      desc: "Live order preparation screen",
     },
     {
       id: "ADMIN",
       label: "Restaurant Admin",
-      desc: "Menu inventory & table operations",
-      iconColor: "text-emerald-400",
+      desc: "Menu inventory & floor management",
     },
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#0f1115]/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 via-rose-600 to-amber-500 text-white shadow-lg shadow-rose-900/30 transition-transform group-hover:scale-105">
-            <UtensilsCrossed className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xl font-bold tracking-tight text-white font-serif">
-                Dine<span className="text-rose-500">Desk</span>
-              </span>
-              <span className="rounded-full bg-rose-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-rose-400 border border-rose-500/20">
-                TASK 2
+    <header className="sticky top-0 z-40 w-full border-b border-[#E8E8E8] bg-[#FFFFFF] shadow-sm">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 gap-4">
+        {/* Left: Brand Logo & Dining Mode */}
+        <div className="flex items-center gap-4 shrink-0">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E23744] text-white shadow-sm transition-transform group-hover:scale-105">
+              <Utensils className="h-5 w-5" />
+            </div>
+            <div>
+              <span className="font-heading text-xl font-extrabold tracking-tight text-[#1C1C1C]">
+                Dine<span className="text-[#E23744]">Desk</span>
               </span>
             </div>
-            <p className="text-[11px] text-zinc-400">Culinary Ordering Platform</p>
+          </Link>
+
+          {/* Table / Service Mode Pill Dropdown */}
+          <div className="relative hidden md:block">
+            <button
+              onClick={() => setTableMenuOpen(!tableMenuOpen)}
+              className="flex items-center gap-1.5 rounded-full border border-[#E8E8E8] bg-[#F8F9FA] px-3 py-1.5 text-xs font-semibold text-[#1C1C1C] hover:bg-[#F4F5F7] transition"
+            >
+              <MapPin className="h-3.5 w-3.5 text-[#E23744]" />
+              <span>
+                {orderType === "DINE_IN"
+                  ? `Dine-in: Table #${selectedTableNumber ?? 2}`
+                  : orderType === "TAKEOUT"
+                  ? "Takeaway Pickup"
+                  : "Direct Delivery"}
+              </span>
+              <ChevronDown className="h-3 w-3 text-[#686B78]" />
+            </button>
+
+            {tableMenuOpen && (
+              <div className="absolute left-0 mt-2 w-52 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] p-2 shadow-xl z-50 animate-in fade-in zoom-in-95">
+                <div className="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-[#93959F]">
+                  Service Mode
+                </div>
+                <div className="mt-1 space-y-1">
+                  <button
+                    onClick={() => {
+                      setOrderType("DINE_IN");
+                      setTableMenuOpen(false);
+                    }}
+                    className={`w-full text-left rounded-lg p-2 text-xs font-medium transition ${
+                      orderType === "DINE_IN"
+                        ? "bg-[#E23744]/10 text-[#E23744] font-bold"
+                        : "text-[#1C1C1C] hover:bg-[#F4F5F7]"
+                    }`}
+                  >
+                    🍽️ Dine-in (Table #{selectedTableNumber ?? 2})
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOrderType("TAKEOUT");
+                      setTableMenuOpen(false);
+                    }}
+                    className={`w-full text-left rounded-lg p-2 text-xs font-medium transition ${
+                      orderType === "TAKEOUT"
+                        ? "bg-[#E23744]/10 text-[#E23744] font-bold"
+                        : "text-[#1C1C1C] hover:bg-[#F4F5F7]"
+                    }`}
+                  >
+                    🛍️ Takeaway (Counter Pickup)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOrderType("DELIVERY");
+                      setTableMenuOpen(false);
+                    }}
+                    className={`w-full text-left rounded-lg p-2 text-xs font-medium transition ${
+                      orderType === "DELIVERY"
+                        ? "bg-[#E23744]/10 text-[#E23744] font-bold"
+                        : "text-[#1C1C1C] hover:bg-[#F4F5F7]"
+                    }`}
+                  >
+                    🛵 Home Delivery
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </Link>
+        </div>
 
-        {/* Center Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 rounded-full border border-white/5 bg-white/[0.03] p-1">
-          {navLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`relative flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
-                  isActive
-                    ? "bg-rose-600 text-white shadow-sm shadow-rose-900/40"
-                    : "text-zinc-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                <span>{link.label}</span>
-                {link.badge && (
-                  <span className="ml-1 rounded-full bg-amber-400/20 px-1.5 py-0.2 text-[9px] font-bold text-amber-300">
-                    {link.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Right Action Controls: Table Pill, Role Switcher, Cart Drawer Button */}
-        <div className="flex items-center gap-2.5">
-          {/* Table Indicator (for Dine-in) */}
-          <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs text-zinc-300">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Table #{selectedTableNumber ?? 2}</span>
+        {/* Center: Search Bar (Swiggy / Zomato standard) */}
+        <div className="flex-1 max-w-md hidden sm:block">
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#93959F]" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search for dishes, cuisines, ingredients..."
+              className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] pl-10 pr-4 py-2 text-xs text-[#1C1C1C] placeholder-[#93959F] focus:border-[#E23744] focus:bg-[#FFFFFF] focus:outline-none transition"
+            />
           </div>
+        </div>
 
-          {/* Role Switcher Dropdown */}
+        {/* Right: Nav Tabs, Role Switcher & Cart Pill */}
+        <div className="flex items-center gap-3 shrink-0">
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                    isActive
+                      ? "text-[#E23744] bg-[#E23744]/10"
+                      : "text-[#3E4152] hover:text-[#E23744] hover:bg-[#F8F9FA]"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{link.label}</span>
+                  {link.badge && (
+                    <span className="ml-1 rounded-full bg-[#E23744] px-1.5 py-0.2 text-[9px] font-bold text-white">
+                      {link.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Role Switcher */}
           <div className="relative">
             <button
               onClick={() => setRoleMenuOpen(!roleMenuOpen)}
-              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition"
+              className="flex items-center gap-1.5 rounded-lg border border-[#E8E8E8] bg-[#FFFFFF] px-2.5 py-1.5 text-xs font-semibold text-[#3E4152] hover:bg-[#F8F9FA] transition"
               title="Switch demo persona"
             >
-              <UserCheck className="h-3.5 w-3.5 text-amber-400" />
+              <User className="h-3.5 w-3.5 text-[#E23744]" />
               <span className="hidden sm:inline">
                 {currentRole === "CUSTOMER"
-                  ? "Guest"
+                  ? "Customer"
                   : currentRole === "KITCHEN_STAFF"
                   ? "Kitchen"
                   : "Admin"}
               </span>
-              <ChevronDown className="h-3 w-3 text-zinc-400" />
+              <ChevronDown className="h-3 w-3 text-[#93959F]" />
             </button>
 
             {roleMenuOpen && (
-              <div className="absolute right-0 mt-2 w-64 rounded-xl border border-white/10 bg-[#161a22] p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95">
-                <div className="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                  Switch Active Role
+              <div className="absolute right-0 mt-2 w-64 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] p-2 shadow-2xl z-50 animate-in fade-in zoom-in-95">
+                <div className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[#93959F]">
+                  Switch Role Persona
                 </div>
                 <div className="mt-1 space-y-1">
                   {roles.map((r) => (
@@ -150,17 +224,17 @@ export function Navbar() {
                       }}
                       className={`w-full text-left rounded-lg p-2 text-xs transition flex flex-col gap-0.5 ${
                         currentRole === r.id
-                          ? "bg-rose-500/15 text-rose-300 border border-rose-500/30"
-                          : "text-zinc-300 hover:bg-white/5"
+                          ? "bg-[#E23744]/10 text-[#E23744] font-bold border border-[#E23744]/20"
+                          : "text-[#3E4152] hover:bg-[#F8F9FA]"
                       }`}
                     >
-                      <div className="flex items-center justify-between font-medium">
+                      <div className="flex items-center justify-between font-semibold">
                         <span>{r.label}</span>
                         {currentRole === r.id && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-rose-400"></span>
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#E23744]"></span>
                         )}
                       </div>
-                      <span className="text-[10px] text-zinc-400">{r.desc}</span>
+                      <span className="text-[11px] text-[#686B78] font-normal">{r.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -168,27 +242,22 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Cart Drawer Trigger */}
+          {/* Cart Pill (Zomato/Swiggy standard) */}
           <button
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-rose-900/30 hover:from-rose-500 hover:to-rose-600 transition active:scale-95"
-            aria-label="View shopping cart"
+            className="flex items-center gap-2 rounded-xl bg-[#0F8A65] hover:bg-[#0c7354] px-4 py-2 text-xs font-bold text-white shadow-btn transition active:scale-95"
+            aria-label="View Cart"
           >
             <ShoppingBag className="h-4 w-4" />
-            <span className="hidden sm:inline">
-              {cartCount > 0 ? `$${cartSubtotal.toFixed(2)}` : "Cart"}
+            <span className="tabular-nums font-mono">
+              {cartCount > 0 ? `${cartCount} | $${cartSubtotal.toFixed(2)}` : "Cart"}
             </span>
-            {cartCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 text-[10px] font-bold text-zinc-950">
-                {cartCount}
-              </span>
-            )}
           </button>
         </div>
       </div>
 
       {/* Mobile Navigation bar */}
-      <div className="flex md:hidden border-t border-white/5 bg-[#12151b] px-2 py-1.5 justify-around">
+      <div className="flex lg:hidden border-t border-[#E8E8E8] bg-[#FFFFFF] px-2 py-2 justify-around">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href;
@@ -196,8 +265,8 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] ${
-                isActive ? "text-rose-400 font-bold" : "text-zinc-400"
+              className={`flex flex-col items-center gap-0.5 rounded px-2 py-1 text-[11px] font-semibold ${
+                isActive ? "text-[#E23744]" : "text-[#686B78]"
               }`}
             >
               <Icon className="h-4 w-4" />

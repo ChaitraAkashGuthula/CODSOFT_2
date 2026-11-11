@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useAppStore } from "@/lib/store";
-import { Utensils, Wine, CakeSlice, Salad } from "lucide-react";
 
 interface Category {
   id: string;
@@ -19,45 +18,25 @@ interface CategoryTabsProps {
 export function CategoryTabs({ categories, itemCounts }: CategoryTabsProps) {
   const { selectedCategory, setSelectedCategory } = useAppStore();
 
-  const getCategoryIcon = (slug: string) => {
-    switch (slug) {
-      case "appetizers":
-        return Salad;
-      case "mains":
-        return Utensils;
-      case "desserts":
-        return CakeSlice;
-      case "beverages":
-        return Wine;
-      default:
-        return Utensils;
-    }
-  };
-
   const totalAllItems = Object.values(itemCounts).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+    <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-white/[0.06] scrollbar-none">
       <button
         onClick={() => setSelectedCategory("all")}
-        className={`flex items-center gap-2 shrink-0 rounded-2xl px-4 py-2.5 text-xs font-semibold transition-all ${
+        className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium tracking-tight rounded-md transition-colors shrink-0 ${
           selectedCategory === "all"
-            ? "bg-rose-600 text-white shadow-lg shadow-rose-900/40"
-            : "bg-[#181b22] text-zinc-300 border border-white/5 hover:border-white/10 hover:text-white"
+            ? "bg-[#181d25] text-zinc-100 border border-white/10 shadow-sm"
+            : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]"
         }`}
       >
-        <span>All Selections</span>
-        <span
-          className={`rounded-full px-1.5 py-0.2 text-[10px] ${
-            selectedCategory === "all" ? "bg-white/20 text-white" : "bg-white/5 text-zinc-400"
-          }`}
-        >
-          {totalAllItems}
+        <span>Complete Tasting</span>
+        <span className="font-mono text-[10px] text-zinc-500 tabular-nums">
+          ({totalAllItems})
         </span>
       </button>
 
-      {categories.map((cat) => {
-        const Icon = getCategoryIcon(cat.slug);
+      {categories.map((cat, idx) => {
         const isActive = selectedCategory === cat.slug;
         const count = itemCounts[cat.id] || 0;
 
@@ -65,20 +44,18 @@ export function CategoryTabs({ categories, itemCounts }: CategoryTabsProps) {
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.slug)}
-            className={`flex items-center gap-2 shrink-0 rounded-2xl px-4 py-2.5 text-xs font-semibold transition-all ${
+            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium tracking-tight rounded-md transition-colors shrink-0 ${
               isActive
-                ? "bg-rose-600 text-white shadow-lg shadow-rose-900/40"
-                : "bg-[#181b22] text-zinc-300 border border-white/5 hover:border-white/10 hover:text-white"
+                ? "bg-[#181d25] text-zinc-100 border border-white/10 shadow-sm"
+                : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]"
             }`}
           >
-            <Icon className="h-3.5 w-3.5" />
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+              0{idx + 1}
+            </span>
             <span>{cat.name}</span>
-            <span
-              className={`rounded-full px-1.5 py-0.2 text-[10px] ${
-                isActive ? "bg-white/20 text-white" : "bg-white/5 text-zinc-400"
-              }`}
-            >
-              {count}
+            <span className="font-mono text-[10px] text-zinc-500 tabular-nums">
+              ({count})
             </span>
           </button>
         );

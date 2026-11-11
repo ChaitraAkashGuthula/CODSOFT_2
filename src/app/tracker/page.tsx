@@ -77,7 +77,6 @@ function TrackerContent() {
     }
   }, [searchCode]);
 
-  // Connect to SSE for Live Real-Time Status Updates
   useEffect(() => {
     let eventSource: EventSource | null = null;
     try {
@@ -91,7 +90,7 @@ function TrackerContent() {
             (updated.id === order.id || updated.orderNumber === order.orderNumber)
           ) {
             setOrder(updated);
-            setRecentLiveEvent(`Status updated to ${updated.status} just now!`);
+            setRecentLiveEvent(`Kitchen status updated to: ${updated.status}`);
             setTimeout(() => setRecentLiveEvent(null), 5000);
           }
         } catch (err) {
@@ -111,25 +110,25 @@ function TrackerContent() {
     {
       key: "PENDING",
       title: "Order Placed",
-      desc: "Ticket received in kitchen queue",
+      desc: "Received by restaurant kitchen",
       icon: CheckCircle2,
     },
     {
       key: "PREPARING",
-      title: "Cooking in Kitchen",
-      desc: "Line cooks are searing & plating",
+      title: "Preparing in Kitchen",
+      desc: "Chef is actively cooking dishes",
       icon: ChefHat,
     },
     {
       key: "READY",
-      title: "Ready for Service",
-      desc: "Plated under heat lamps for runner",
+      title: "Ready to Serve",
+      desc: "Plated & ready at delivery counter",
       icon: BellRing,
     },
     {
       key: "SERVED",
-      title: "Served & Enjoyed",
-      desc: "Delivered to table or guest",
+      title: "Completed",
+      desc: "Served at table or delivered",
       icon: UtensilsCrossed,
     },
   ];
@@ -152,19 +151,22 @@ function TrackerContent() {
   const currentStageIdx = order ? getStageIndex(order.status) : 0;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-8">
-      {/* Search Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-8 font-sans">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E8E8E8]">
         <div>
-          <h1 className="text-2xl font-bold font-serif text-white sm:text-3xl">
-            Live Culinary Order Tracker
+          <span className="text-xs font-bold text-[#E23744] uppercase tracking-wider">
+            Live Order Tracking
+          </span>
+          <h1 className="font-heading text-2xl font-extrabold text-[#1C1C1C] sm:text-3xl mt-0.5">
+            Track Order Status
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
-            Real-time step-by-step status directly synced with the Kitchen Display System (KDS).
+          <p className="text-xs text-[#686B78] mt-1">
+            Real-time step-by-step updates synced with restaurant kitchen display.
           </p>
         </div>
 
-        {/* Search Input */}
+        {/* Search */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -173,18 +175,18 @@ function TrackerContent() {
           className="flex items-center gap-2"
         >
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#93959F]" />
             <input
               type="text"
               value={searchCode}
               onChange={(e) => setSearchCode(e.target.value)}
               placeholder="e.g. ORD-1001"
-              className="rounded-xl border border-white/10 bg-white/[0.05] pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:border-rose-500 focus:outline-none"
+              className="rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] pl-10 pr-3 py-2 font-mono text-xs text-[#1C1C1C] placeholder-[#93959F] focus:border-[#E23744] focus:bg-[#FFFFFF] focus:outline-none"
             />
           </div>
           <button
             type="submit"
-            className="rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-rose-500 transition"
+            className="rounded-xl bg-[#E23744] px-4 py-2 text-xs font-bold text-white hover:bg-[#cb202d] transition"
           >
             Track
           </button>
@@ -192,28 +194,30 @@ function TrackerContent() {
       </div>
 
       {recentLiveEvent && (
-        <div className="flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-300 animate-in slide-in-from-top">
-          <Sparkles className="h-4 w-4 animate-spin text-emerald-400" />
-          <span className="font-semibold">{recentLiveEvent}</span>
+        <div className="flex items-center gap-2 rounded-xl bg-[#0F8A65]/10 border border-[#0F8A65]/30 p-3 text-xs text-[#0F8A65] font-bold animate-in slide-in-from-top">
+          <Sparkles className="h-4 w-4 text-[#0F8A65] shrink-0" />
+          <span>{recentLiveEvent}</span>
         </div>
       )}
 
       {loading ? (
-        <div className="h-64 rounded-3xl border border-white/5 bg-[#161a22] p-8 animate-pulse flex items-center justify-center text-zinc-500">
-          Loading live ticket telemetry...
+        <div className="h-64 rounded-2xl bg-[#F8F9FA] border border-[#E8E8E8] flex items-center justify-center text-xs text-[#686B78]">
+          Loading order details...
         </div>
       ) : error ? (
-        <div className="rounded-3xl border border-rose-500/20 bg-rose-500/5 p-8 text-center space-y-3">
-          <AlertCircle className="mx-auto h-8 w-8 text-rose-400" />
-          <h3 className="text-base font-bold text-white">Order Not Found</h3>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-            We couldn't locate order &quot;{searchCode}&quot;. Try searching for sample ticket{" "}
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center space-y-3">
+          <AlertCircle className="mx-auto h-8 w-8 text-[#E23744]" />
+          <h3 className="font-heading font-bold text-base text-[#1C1C1C]">
+            Order Not Found
+          </h3>
+          <p className="text-xs text-[#686B78] max-w-sm mx-auto">
+            Try checking order{" "}
             <button
               onClick={() => {
                 setSearchCode("ORD-1001");
                 fetchOrder("ORD-1001");
               }}
-              className="text-rose-400 underline font-semibold"
+              className="text-[#E23744] underline font-bold"
             >
               ORD-1001
             </button>{" "}
@@ -223,7 +227,7 @@ function TrackerContent() {
                 setSearchCode("ORD-1002");
                 fetchOrder("ORD-1002");
               }}
-              className="text-rose-400 underline font-semibold"
+              className="text-[#E23744] underline font-bold"
             >
               ORD-1002
             </button>
@@ -232,26 +236,26 @@ function TrackerContent() {
         </div>
       ) : order ? (
         <div className="space-y-6">
-          {/* Main Progress Card */}
-          <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#161a22] p-6 sm:p-8 shadow-xl">
-            {/* Ticket Header */}
-            <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
+          {/* Main Status Stepper Card */}
+          <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 sm:p-8 shadow-sm">
+            {/* Header info */}
+            <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#E8E8E8]">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-lg font-bold text-white">
+                  <span className="font-mono text-base font-extrabold text-[#1C1C1C]">
                     {order.orderNumber}
                   </span>
-                  <span className="rounded-full bg-rose-500/15 px-2.5 py-0.5 text-[11px] font-bold text-rose-400 border border-rose-500/20">
+                  <span className="rounded-md bg-[#F4F5F7] px-2.5 py-0.5 text-xs font-bold text-[#3E4152]">
                     {order.type}
                   </span>
                   {order.table && (
-                    <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-bold text-amber-300 border border-amber-500/20">
+                    <span className="rounded-md bg-[#FC8019]/10 text-[#FC8019] text-xs font-bold px-2 py-0.5">
                       Table #{order.table.tableNumber}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Guest: <strong className="text-zinc-200">{order.customerName}</strong> • Placed{" "}
+                <p className="text-xs text-[#686B78] mt-1">
+                  Customer: <strong className="text-[#1C1C1C]">{order.customerName}</strong> • Ordered at{" "}
                   {new Date(order.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -259,18 +263,18 @@ function TrackerContent() {
                 </p>
               </div>
 
-              {/* Status Badge */}
+              {/* Status Pill */}
               <div className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span className="rounded-xl bg-white/5 px-3 py-1.5 text-xs font-bold text-emerald-400 border border-emerald-500/30">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#0F8A65] animate-pulse"></span>
+                <span className="rounded-xl bg-[#0F8A65]/10 text-[#0F8A65] px-3.5 py-1 text-xs font-extrabold uppercase">
                   {order.status}
                 </span>
               </div>
             </div>
 
-            {/* Step-by-step Visual Tracker */}
+            {/* Stepper Grid (Swiggy / Zomato order tracking standard) */}
             <div className="py-8">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {stages.map((stage, idx) => {
                   const Icon = stage.icon;
                   const isDone = idx < currentStageIdx;
@@ -279,32 +283,34 @@ function TrackerContent() {
                   return (
                     <div
                       key={stage.key}
-                      className={`relative flex md:flex-col items-center md:items-start gap-4 p-4 rounded-2xl transition-all ${
+                      className={`flex md:flex-col items-center md:items-start gap-3 p-4 rounded-xl border transition-all ${
                         isCurrent
-                          ? "bg-rose-500/15 border border-rose-500/40 shadow-lg shadow-rose-950/40"
+                          ? "border-[#E23744] bg-[#E23744]/5 shadow-sm"
                           : isDone
-                          ? "bg-white/[0.02] border border-emerald-500/20"
-                          : "bg-white/[0.01] border border-white/5 opacity-40"
+                          ? "border-[#0F8A65]/30 bg-[#0F8A65]/5"
+                          : "border-[#E8E8E8] bg-[#F8F9FA] opacity-50"
                       }`}
                     >
                       <div
-                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition ${
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold ${
                           isCurrent
-                            ? "bg-rose-600 text-white shadow-md shadow-rose-900/50"
+                            ? "bg-[#E23744] text-white shadow-sm"
                             : isDone
-                            ? "bg-emerald-500 text-white"
-                            : "bg-white/10 text-zinc-400"
+                            ? "bg-[#0F8A65] text-white"
+                            : "bg-[#E8E8E8] text-[#93959F]"
                         }`}
                       >
                         <Icon className="h-5 w-5" />
                       </div>
 
                       <div>
-                        <span className="text-[11px] font-mono text-zinc-400">Step {idx + 1}</span>
-                        <h4 className="font-serif text-sm font-bold text-white mt-0.5">
+                        <span className="text-[11px] font-bold text-[#93959F] uppercase">
+                          Step 0{idx + 1}
+                        </span>
+                        <h4 className="font-heading text-sm font-bold text-[#1C1C1C] mt-0.5">
                           {stage.title}
                         </h4>
-                        <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
+                        <p className="text-[11px] text-[#686B78] mt-0.5 leading-snug">
                           {stage.desc}
                         </p>
                       </div>
@@ -314,21 +320,21 @@ function TrackerContent() {
               </div>
             </div>
 
-            {/* Elapsed / Estimated Time Indicator */}
-            <div className="flex items-center justify-between rounded-2xl bg-white/[0.03] p-4 text-xs text-zinc-300">
+            {/* Prep Note */}
+            <div className="flex items-center justify-between rounded-xl bg-[#F8F9FA] p-3.5 text-xs text-[#686B78]">
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-amber-400" />
+                <Clock className="h-4 w-4 text-[#FC8019]" />
                 <span>
                   {order.status === "SERVED"
-                    ? "Order has been successfully served. Enjoy your meal!"
+                    ? "Order served and completed. We hope you enjoyed your meal!"
                     : order.status === "READY"
-                    ? "Your order is ready at the pass! Waitstaff is on the way."
-                    : "Estimated kitchen prep time remaining: ~10-15 minutes."}
+                    ? "Your order is ready at the delivery pass! Server on the way."
+                    : "Estimated preparation time remaining: ~10 to 15 mins."}
                 </span>
               </div>
               <button
                 onClick={() => fetchOrder(order.orderNumber)}
-                className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-white transition"
+                className="flex items-center gap-1 text-xs font-bold text-[#E23744] hover:underline"
               >
                 <RefreshCw className="h-3 w-3" />
                 <span>Refresh</span>
@@ -336,53 +342,59 @@ function TrackerContent() {
             </div>
           </div>
 
-          {/* Ordered Dishes Detail Breakdown */}
-          <div className="rounded-3xl border border-white/10 bg-[#161a22] p-6 shadow-xl">
-            <h3 className="text-base font-bold font-serif text-white mb-4 flex items-center gap-2">
-              <ShoppingBag className="h-4 w-4 text-rose-500" />
-              <span>Dish Breakdown ({order.items.length} items)</span>
+          {/* Itemized Order Summary */}
+          <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 shadow-sm">
+            <h3 className="font-heading text-base font-bold text-[#1C1C1C] mb-4 flex items-center gap-2">
+              <ShoppingBag className="h-4 w-4 text-[#0F8A65]" />
+              <span>Order Summary ({order.items.length} items)</span>
             </h3>
 
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-[#E8E8E8]">
               {order.items.map((item) => (
                 <div key={item.id} className="py-3 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/10 font-bold text-white text-[11px]">
+                    <span className="flex h-5 w-5 items-center justify-center rounded bg-[#F4F5F7] font-bold text-[#1C1C1C] text-xs">
                       {item.quantity}x
                     </span>
                     <div>
-                      <h5 className="font-semibold text-white">{item.menuItem.name}</h5>
+                      <strong className="text-[#1C1C1C]">{item.menuItem.name}</strong>
                       {item.customInstructions && (
-                        <p className="text-[11px] text-rose-300 italic mt-0.5">
+                        <p className="text-[11px] text-[#E23744] italic mt-0.5">
                           &quot;{item.customInstructions}&quot;
                         </p>
                       )}
                     </div>
                   </div>
-                  <span className="font-bold text-zinc-300">
+                  <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
                     ${(item.unitPrice * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
             </div>
 
-            {/* Price Calculations */}
-            <div className="mt-4 pt-4 border-t border-white/10 space-y-1.5 text-xs text-zinc-400">
+            {/* Bill Details */}
+            <div className="mt-4 pt-4 border-t border-[#E8E8E8] space-y-2 text-xs text-[#686B78]">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="text-zinc-200">${order.subtotal.toFixed(2)}</span>
+                <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
+                  ${order.subtotal.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span>Sales Tax</span>
-                <span className="text-zinc-200">${order.tax.toFixed(2)}</span>
+                <span>Taxes & Charges (8%)</span>
+                <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
+                  ${order.tax.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span>Tip</span>
-                <span className="text-zinc-200">${order.tip.toFixed(2)}</span>
+                <span>Staff Tip</span>
+                <span className="font-mono font-bold text-[#1C1C1C] tabular-nums">
+                  ${order.tip.toFixed(2)}
+                </span>
               </div>
-              <div className="flex justify-between font-bold text-sm text-white pt-2 border-t border-white/5">
-                <span>Total Amount Paid</span>
-                <span className="text-amber-400 font-serif text-base font-extrabold">
+              <div className="flex justify-between font-extrabold text-sm text-[#1C1C1C] pt-2 border-t border-[#E8E8E8]">
+                <span>Total Bill Settled</span>
+                <span className="font-mono text-[#0F8A65] text-base tabular-nums">
                   ${order.total.toFixed(2)}
                 </span>
               </div>
@@ -398,7 +410,9 @@ export default function TrackerPage() {
   return (
     <Suspense
       fallback={
-        <div className="p-8 text-center text-xs text-zinc-400">Loading tracker view...</div>
+        <div className="p-8 text-center text-xs text-[#686B78]">
+          Loading tracker view...
+        </div>
       }
     >
       <TrackerContent />

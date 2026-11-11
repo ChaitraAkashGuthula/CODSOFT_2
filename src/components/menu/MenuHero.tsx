@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useAppStore } from "@/lib/store";
-import { Search, Sparkles, Leaf, WheatOff, Flame, X } from "lucide-react";
+import { Search, X, Sparkles } from "lucide-react";
 
 export function MenuHero() {
   const {
@@ -20,119 +20,124 @@ export function MenuHero() {
   } = useAppStore();
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-[#181d26] via-[#141720] to-[#0f1115] p-6 sm:p-10 shadow-2xl">
-      {/* Ambient background glow */}
-      <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-rose-600/15 blur-3xl"></div>
-      <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl"></div>
+    <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#11141a] p-6 sm:p-10 shadow-sm">
+      {/* Subtle architectural grid accent */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(194,109,67,0.06),transparent_60%)]"></div>
 
       <div className="relative z-10 max-w-3xl">
-        {/* Service Type Switcher Pill */}
-        <div className="mb-4 inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] p-1 text-xs">
+        {/* Service Allocation Segmented Control */}
+        <div className="mb-6 inline-flex items-center rounded-lg border border-white/[0.08] bg-[#0c0e12] p-1 text-xs">
           <button
             onClick={() => setOrderType("DINE_IN")}
-            className={`rounded-full px-3.5 py-1 font-medium transition ${
+            className={`rounded-md px-3.5 py-1.5 font-medium transition ${
               orderType === "DINE_IN"
-                ? "bg-rose-600 text-white shadow-sm shadow-rose-900/40"
-                : "text-zinc-400 hover:text-white"
+                ? "bg-[#1d222b] text-zinc-100 shadow-sm border border-white/10"
+                : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            🍽️ Dine-in (Table #{selectedTableNumber ?? 2})
+            Table #{selectedTableNumber ?? 2} (Reserve Seating)
           </button>
           <button
             onClick={() => setOrderType("TAKEOUT")}
-            className={`rounded-full px-3.5 py-1 font-medium transition ${
+            className={`rounded-md px-3.5 py-1.5 font-medium transition ${
               orderType === "TAKEOUT"
-                ? "bg-rose-600 text-white shadow-sm shadow-rose-900/40"
-                : "text-zinc-400 hover:text-white"
+                ? "bg-[#1d222b] text-zinc-100 shadow-sm border border-white/10"
+                : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            🛍️ Takeout Pickup
+            Cellar Takeaway
           </button>
           <button
             onClick={() => setOrderType("DELIVERY")}
-            className={`rounded-full px-3.5 py-1 font-medium transition ${
+            className={`rounded-md px-3.5 py-1.5 font-medium transition ${
               orderType === "DELIVERY"
-                ? "bg-rose-600 text-white shadow-sm shadow-rose-900/40"
-                : "text-zinc-400 hover:text-white"
+                ? "bg-[#1d222b] text-zinc-100 shadow-sm border border-white/10"
+                : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            🛵 Direct Delivery
+            Curated Delivery
           </button>
         </div>
 
-        {/* Main Headline */}
-        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl font-serif">
-          Artisanal Dining, <br />
-          <span className="bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 bg-clip-text text-transparent">
-            Prepared to Perfection.
+        {/* Editorial Subtitle & Headline */}
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[11px] font-mono uppercase tracking-widest text-[#d4a373]">
+            Curated Culinary Catalog
           </span>
+          <span className="text-zinc-600">•</span>
+          <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest">
+            Autumn Service 2026
+          </span>
+        </div>
+
+        <h1 className="font-serif text-3xl font-medium tracking-tight text-zinc-100 sm:text-5xl leading-tight">
+          Seasonal Tasting Menu & Cellar Reserve.
         </h1>
 
-        <p className="mt-3 text-sm text-zinc-300 sm:text-base leading-relaxed">
-          Explore our seasonal tasting catalog crafted from locally sourced farm ingredients,
-          dry-aged cuts, and handcrafted botanical elixirs.
+        <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed font-sans">
+          Each course is prepared to order using estate-grown botanicals, sustainably caught wild
+          proteins, and single-origin reductions.
         </p>
 
-        {/* Search & Dietary Filters Container */}
-        <div className="mt-6 space-y-3">
-          {/* Search Bar */}
-          <div className="relative max-w-xl">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+        {/* Search & Dietary Controls */}
+        <div className="mt-8 space-y-3">
+          {/* Hairline Search Field */}
+          <div className="relative max-w-lg">
+            <Search className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by dish name, truffle, wagyu, sea bass..."
-              className="w-full rounded-2xl border border-white/10 bg-white/[0.06] pl-10 pr-10 py-3 text-sm text-white placeholder-zinc-400 focus:border-rose-500 focus:bg-white/[0.08] focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition"
+              placeholder="Filter by course, cut, varietal, or ingredient..."
+              className="w-full rounded-lg border border-white/[0.08] bg-[#0c0e12] pl-10 pr-9 py-2.5 text-xs text-zinc-200 placeholder-zinc-500 focus:border-[#c26d43]/60 focus:bg-[#0e1116] focus:outline-none transition font-sans"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
-          {/* Quick Dietary Filter Badges */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs font-medium text-zinc-400">Dietary Preferences:</span>
+          {/* Understated Outline Dietary Filter Chips */}
+          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+            <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
+              Dietary:
+            </span>
 
             <button
               onClick={() => setVegOnly(!vegOnly)}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition border ${
                 vegOnly
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                  : "bg-white/5 text-zinc-300 border border-white/5 hover:bg-white/10"
+                  ? "border-[#4a5d4e] bg-[#4a5d4e]/20 text-[#a3c9a8]"
+                  : "border-white/[0.08] text-zinc-400 hover:text-zinc-200 hover:border-white/15"
               }`}
             >
-              <Leaf className="h-3 w-3 text-emerald-400" />
-              <span>Vegetarian</span>
+              Plant-Forward (Veg)
             </button>
 
             <button
               onClick={() => setVeganOnly(!veganOnly)}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition border ${
                 veganOnly
-                  ? "bg-teal-500/20 text-teal-300 border border-teal-500/40"
-                  : "bg-white/5 text-zinc-300 border border-white/5 hover:bg-white/10"
+                  ? "border-[#4a5d4e] bg-[#4a5d4e]/20 text-[#a3c9a8]"
+                  : "border-white/[0.08] text-zinc-400 hover:text-zinc-200 hover:border-white/15"
               }`}
             >
-              <Sparkles className="h-3 w-3 text-teal-400" />
-              <span>100% Vegan</span>
+              100% Vegan
             </button>
 
             <button
               onClick={() => setGlutenFreeOnly(!glutenFreeOnly)}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition border ${
                 glutenFreeOnly
-                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                  : "bg-white/5 text-zinc-300 border border-white/5 hover:bg-white/10"
+                  ? "border-[#d4a373] bg-[#d4a373]/15 text-[#e0b992]"
+                  : "border-white/[0.08] text-zinc-400 hover:text-zinc-200 hover:border-white/15"
               }`}
             >
-              <WheatOff className="h-3 w-3 text-amber-400" />
-              <span>Gluten-Free</span>
+              Gluten-Conscious
             </button>
           </div>
         </div>

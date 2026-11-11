@@ -8,12 +8,11 @@ import confetti from "canvas-confetti";
 import {
   X,
   CreditCard,
-  ShieldCheck,
   Lock,
   Loader2,
   CheckCircle2,
-  Receipt,
   ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
 interface CheckoutModalProps {
@@ -60,9 +59,9 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       const payload = {
         type: orderType,
         tableId: orderType === "DINE_IN" ? selectedTableId : null,
-        customerName: customerName || "Guest Diner",
+        customerName: customerName || "Customer",
         customerPhone: customerPhone || "+1 (555) 000-0000",
-        customerEmail: "guest@example.com",
+        customerEmail: "customer@example.com",
         notes: orderNotes || undefined,
         tip: getCartTip(),
         paymentMethod: "CARD",
@@ -85,18 +84,15 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         throw new Error(data.error || "Order creation failed");
       }
 
-      // Success
       setCreatedOrder(data.order);
       playSuccessChime();
 
-      // Trigger Confetti celebration
       confetti({
-        particleCount: 80,
-        spread: 60,
+        particleCount: 60,
+        spread: 50,
         origin: { y: 0.6 },
       });
 
-      // Clear the local cart
       clearCart();
     } catch (err: any) {
       alert(`Payment failed: ${err.message}`);
@@ -114,167 +110,161 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in">
-      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-[#141821] shadow-2xl text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-[#FFFFFF] text-[#1C1C1C] shadow-2xl font-sans border border-[#E8E8E8]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 p-5">
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-rose-500" />
-            <h2 className="text-lg font-bold font-serif text-white">
-              {createdOrder ? "Payment Confirmed" : "Mock Payment Checkout"}
+        <div className="flex items-center justify-between border-b border-[#E8E8E8] p-5 bg-[#F8F9FA]">
+          <div>
+            <h2 className="font-heading text-lg font-bold text-[#1C1C1C]">
+              {createdOrder ? "Order Confirmed!" : "Payment & Checkout"}
             </h2>
+            <p className="text-xs text-[#686B78]">
+              {createdOrder
+                ? "Your order is placed with the restaurant"
+                : "Safe & Secure 256-bit encrypted transaction"}
+            </p>
           </div>
           {!loading && (
             <button
               onClick={onClose}
-              className="rounded-full p-1 text-zinc-400 hover:text-white transition"
+              className="rounded-full p-1 text-[#686B78] hover:bg-[#E8E8E8] transition"
             >
               <X className="h-5 w-5" />
             </button>
           )}
         </div>
 
-        {/* Modal Body */}
+        {/* Body */}
         <div className="p-6">
           {createdOrder ? (
-            /* Success confirmation screen */
             <div className="text-center py-4 space-y-4">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#0F8A65]/10 text-[#0F8A65]">
                 <CheckCircle2 className="h-10 w-10" />
               </div>
 
               <div>
-                <span className="rounded-full bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-400 border border-rose-500/20">
-                  {createdOrder.orderNumber}
+                <span className="font-mono text-xs font-bold text-[#0F8A65] bg-[#0F8A65]/10 px-3 py-1 rounded-full">
+                  ORDER ID: {createdOrder.orderNumber}
                 </span>
-                <h3 className="mt-2 text-2xl font-bold font-serif text-white">
-                  Order Successfully Dispatched!
+                <h3 className="mt-3 text-xl font-heading font-extrabold text-[#1C1C1C]">
+                  Order Placed Successfully!
                 </h3>
-                <p className="mt-1 text-sm text-zinc-400">
-                  Your ticket has been sent to the Kitchen Display System (KDS). The brigade is
-                  preparing your dishes.
+                <p className="mt-1 text-xs text-[#686B78] max-w-xs mx-auto">
+                  The restaurant kitchen has received your ticket and begun food preparation.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-left text-xs space-y-1.5">
-                <div className="flex justify-between text-zinc-400">
-                  <span>Service Mode:</span>
-                  <span className="text-white font-medium">{createdOrder.type}</span>
+              <div className="rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-4 text-left text-xs space-y-2">
+                <div className="flex justify-between text-[#686B78]">
+                  <span>Delivery/Service Mode:</span>
+                  <strong className="text-[#1C1C1C]">{createdOrder.type}</strong>
                 </div>
                 {createdOrder.table && (
-                  <div className="flex justify-between text-zinc-400">
+                  <div className="flex justify-between text-[#686B78]">
                     <span>Table Assignment:</span>
-                    <span className="text-white font-medium">Table #{createdOrder.table.tableNumber}</span>
+                    <strong className="text-[#1C1C1C]">Table #{createdOrder.table.tableNumber}</strong>
                   </div>
                 )}
-                <div className="flex justify-between text-zinc-400">
-                  <span>Guest Name:</span>
-                  <span className="text-white font-medium">{createdOrder.customerName}</span>
+                <div className="flex justify-between text-[#686B78]">
+                  <span>Customer Name:</span>
+                  <strong className="text-[#1C1C1C]">{createdOrder.customerName}</strong>
                 </div>
-                <div className="flex justify-between text-zinc-400 pt-2 border-t border-white/5 font-semibold">
-                  <span>Amount Paid:</span>
-                  <span className="text-emerald-400 font-bold">${createdOrder.total.toFixed(2)}</span>
+                <div className="flex justify-between text-[#686B78] pt-2 border-t border-[#E8E8E8] font-bold">
+                  <span className="text-[#1C1C1C]">Total Paid:</span>
+                  <span className="text-[#0F8A65] text-sm tabular-nums font-mono font-extrabold">
+                    ${createdOrder.total.toFixed(2)}
+                  </span>
                 </div>
               </div>
 
               <button
                 onClick={handleTrackOrder}
-                className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 py-3.5 text-sm font-bold text-white shadow-xl shadow-rose-900/40 hover:from-rose-500 hover:to-rose-600 transition"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#E23744] hover:bg-[#cb202d] py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-btn transition"
               >
-                <span>Watch Live Order Progress</span>
+                <span>Track Live Order Status</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           ) : (
-            /* Payment Form */
             <form onSubmit={handlePay} className="space-y-4">
-              {/* Customer Info */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Your Name</label>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
+                    Your Name
+                  </label>
                   <input
                     type="text"
                     required
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="Guest Name"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-xs text-white focus:border-rose-500 focus:outline-none"
+                    placeholder="Full Name"
+                    className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5 text-xs text-[#1C1C1C] focus:border-[#E23744] focus:bg-[#FFFFFF] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Phone Number</label>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
+                    Mobile Number
+                  </label>
                   <input
                     type="text"
                     required
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     placeholder="+1 (555) 000-0000"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-xs text-white focus:border-rose-500 focus:outline-none"
+                    className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5 text-xs text-[#1C1C1C] focus:border-[#E23744] focus:bg-[#FFFFFF] focus:outline-none"
                   />
                 </div>
               </div>
 
-              {/* Card Number */}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Card Details (Mocked Sandbox)
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
+                  Card Number (Test Sandbox)
                 </label>
                 <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                  <CreditCard className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#93959F]" />
                   <input
                     type="text"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.05] pl-9 pr-3 py-2.5 text-xs text-white focus:border-rose-500 focus:outline-none"
+                    className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] pl-10 pr-3 py-2.5 font-mono text-xs text-[#1C1C1C] focus:border-[#E23744] focus:bg-[#FFFFFF] focus:outline-none tabular-nums"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Expires</label>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
+                    Expiry Date
+                  </label>
                   <input
                     type="text"
                     value={cardExpiry}
                     onChange={(e) => setCardExpiry(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-xs text-white focus:border-rose-500 focus:outline-none"
+                    className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5 font-mono text-xs text-[#1C1C1C] focus:border-[#E23744] focus:bg-[#FFFFFF] focus:outline-none tabular-nums"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">CVC / CVV</label>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
+                    CVV
+                  </label>
                   <input
                     type="text"
                     value={cardCvc}
                     onChange={(e) => setCardCvc(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-xs text-white focus:border-rose-500 focus:outline-none"
+                    className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5 font-mono text-xs text-[#1C1C1C] focus:border-[#E23744] focus:bg-[#FFFFFF] focus:outline-none tabular-nums"
                   />
                 </div>
               </div>
 
-              {/* Order Summary Pill */}
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-xs space-y-1">
-                <div className="flex justify-between text-zinc-400">
-                  <span>Order Type:</span>
-                  <span className="text-zinc-200 font-medium">
-                    {orderType === "DINE_IN" ? `Dine-in (Table #${selectedTableNumber ?? 2})` : orderType}
-                  </span>
-                </div>
-                <div className="flex justify-between text-zinc-400">
-                  <span>Subtotal + 8% Tax + Tip:</span>
-                  <span className="text-zinc-200 font-medium">${total.toFixed(2)}</span>
-                </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[#686B78] pt-1">
+                <ShieldCheck className="h-4 w-4 text-[#0F8A65]" />
+                <span>Card data is processed via secure mock gateway token</span>
               </div>
 
-              <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
-                <Lock className="h-3 w-3 text-emerald-400" />
-                <span>256-bit SSL encrypted mock payment test environment</span>
-              </div>
-
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 py-3.5 text-sm font-bold text-white shadow-xl shadow-rose-900/40 hover:from-rose-500 hover:to-rose-600 transition disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#0F8A65] hover:bg-[#0c7354] py-3.5 text-xs font-extrabold uppercase tracking-wider text-white shadow-btn transition disabled:opacity-50"
               >
                 {loading ? (
                   <>
@@ -282,7 +272,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     <span>Processing Payment...</span>
                   </>
                 ) : (
-                  <span>Authorize & Pay ${total.toFixed(2)}</span>
+                  <span>Pay ${total.toFixed(2)}</span>
                 )}
               </button>
             </form>

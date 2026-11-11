@@ -3,18 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useAppStore } from "@/lib/store";
-import {
-  X,
-  Plus,
-  Minus,
-  Clock,
-  Flame,
-  AlertTriangle,
-  Leaf,
-  Sparkles,
-  WheatOff,
-  ShoppingBag,
-} from "lucide-react";
+import { X, Plus, Minus, Clock, Flame, Star, AlertCircle, ShoppingBag } from "lucide-react";
 
 interface MenuItem {
   id: string;
@@ -59,20 +48,21 @@ export function DishDetailModal({ item, onClose }: DishDetailModalProps) {
   };
 
   const totalPrice = (item.price * quantity).toFixed(2);
+  const rating = ((item.name.length % 5) * 0.1 + 4.4).toFixed(1);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/10 bg-[#151922] shadow-2xl text-white animate-in zoom-in-95">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-[#FFFFFF] text-[#1C1C1C] shadow-2xl animate-in zoom-in-95 border border-[#E8E8E8]">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-zinc-300 hover:text-white backdrop-blur-md transition"
+          className="absolute right-3.5 top-3.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[#FFFFFF]/90 text-[#1C1C1C] hover:bg-[#FFFFFF] shadow-sm transition"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
 
-        {/* Hero Image */}
-        <div className="relative h-60 w-full overflow-hidden sm:h-72 bg-zinc-900">
+        {/* Dish Image */}
+        <div className="relative h-60 w-full overflow-hidden bg-[#F4F5F7]">
           <Image
             src={item.imageUrl}
             alt={item.name}
@@ -80,92 +70,92 @@ export function DishDetailModal({ item, onClose }: DishDetailModalProps) {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#151922] via-[#151922]/30 to-transparent"></div>
-
-          {/* Dietary Badges */}
-          <div className="absolute left-4 bottom-4 flex flex-wrap gap-2">
-            {item.isVegetarian && (
-              <span className="flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
-                <Leaf className="h-3 w-3" /> Veg
-              </span>
-            )}
-            {item.isVegan && (
-              <span className="flex items-center gap-1 rounded-full bg-teal-500/90 px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
-                <Sparkles className="h-3 w-3" /> Vegan
-              </span>
-            )}
-            {item.isGlutenFree && (
-              <span className="flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
-                <WheatOff className="h-3 w-3" /> Gluten-Free
-              </span>
-            )}
-          </div>
         </div>
 
-        {/* Content Details */}
+        {/* Details Content */}
         <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-bold font-serif text-white">{item.name}</h2>
-              <p className="mt-1 text-sm text-zinc-300 leading-relaxed">{item.description}</p>
+          {/* Veg Badge + Title + Rating */}
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              {item.isVegetarian || item.isVegan ? (
+                <span className="veg-badge" title="Vegetarian"></span>
+              ) : (
+                <span className="nonveg-badge" title="Non-Vegetarian"></span>
+              )}
+              {item.isVegetarian && (
+                <span className="text-[11px] font-bold text-[#0F8A65]">VEGETARIAN</span>
+              )}
+              {!item.isVegetarian && (
+                <span className="text-[11px] font-bold text-[#E43B4F]">NON-VEG</span>
+              )}
             </div>
-            <div className="text-right shrink-0">
-              <span className="text-2xl font-black text-amber-400 font-serif">
+
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="font-heading text-xl font-bold text-[#1C1C1C]">
+                {item.name}
+              </h2>
+              <span className="font-heading text-xl font-extrabold text-[#1C1C1C] tabular-nums shrink-0">
                 ${item.price.toFixed(2)}
               </span>
             </div>
-          </div>
 
-          {/* Quick Metrics (Prep Time, Calories, Allergens) */}
-          <div className="grid grid-cols-3 gap-2.5 rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-center">
-            <div className="flex flex-col items-center justify-center">
-              <Clock className="h-4 w-4 text-rose-400 mb-1" />
-              <span className="text-[11px] text-zinc-400">Prep Time</span>
-              <span className="text-xs font-semibold text-white">{item.preparationTime} mins</span>
-            </div>
-            <div className="flex flex-col items-center justify-center border-x border-white/5">
-              <Flame className="h-4 w-4 text-amber-400 mb-1" />
-              <span className="text-[11px] text-zinc-400">Calories</span>
-              <span className="text-xs font-semibold text-white">
-                {item.calories ? `${item.calories} kcal` : "Custom"}
+            <div className="mt-2 flex items-center gap-2">
+              <span className="inline-flex items-center gap-0.5 rounded px-2 py-0.5 text-xs font-bold text-white bg-[#24963F]">
+                <span>★</span>
+                <span>{rating}</span>
               </span>
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <AlertTriangle className="h-4 w-4 text-orange-400 mb-1" />
-              <span className="text-[11px] text-zinc-400">Allergens</span>
-              <span className="text-xs font-semibold text-white truncate max-w-[90px]">
-                {item.allergens.length > 0 ? item.allergens.join(", ") : "None"}
+              <span className="text-xs text-[#686B78]">
+                {item.calories ? `${item.calories} kcal` : "Chef Specialty"}
+              </span>
+              <span className="text-[#93959F] text-xs">•</span>
+              <span className="text-xs text-[#686B78] flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                <span>{item.preparationTime} mins cooking time</span>
               </span>
             </div>
           </div>
 
-          {/* Custom Kitchen Instructions */}
+          <p className="text-xs text-[#686B78] leading-relaxed">
+            {item.description}
+          </p>
+
+          {/* Allergens warning */}
+          {item.allergens.length > 0 && (
+            <div className="rounded-xl bg-[#F8F9FA] border border-[#E8E8E8] p-3 text-xs text-[#686B78] flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-[#FC8019] shrink-0" />
+              <span>Contains: <strong>{item.allergens.join(", ")}</strong></span>
+            </div>
+          )}
+
+          {/* Cooking Instructions textarea */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-              Special Preparation Notes for the Kitchen:
+            <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
+              Add cooking instructions / customization:
             </label>
             <textarea
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
-              placeholder="e.g. Dressing on the side, extra crispy, sauce packed separately..."
+              placeholder="e.g. Less spicy, dressing on side, no onions, extra crispy..."
               rows={2}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-3 text-xs text-white placeholder-zinc-500 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-3 text-xs text-[#1C1C1C] placeholder-[#93959F] focus:border-[#0F8A65] focus:bg-[#FFFFFF] focus:outline-none"
             />
           </div>
 
           {/* Quantity Controls & Add to Cart Action */}
-          <div className="pt-2 flex items-center justify-between gap-4 border-t border-white/10">
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.05] p-1.5">
+          <div className="pt-2 flex items-center justify-between gap-4 border-t border-[#E8E8E8]">
+            <div className="flex items-center rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] px-2 py-1">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-[#1C1C1C] hover:bg-[#FFFFFF] transition"
               >
                 <Minus className="h-4 w-4" />
               </button>
-              <span className="w-6 text-center text-sm font-bold text-white">{quantity}</span>
+              <span className="w-8 text-center text-sm font-bold text-[#1C1C1C] tabular-nums">
+                {quantity}
+              </span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-[#1C1C1C] hover:bg-[#FFFFFF] transition"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -174,11 +164,11 @@ export function DishDetailModal({ item, onClose }: DishDetailModalProps) {
             <button
               onClick={handleAdd}
               disabled={!item.isAvailable}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 py-3 text-sm font-bold text-white shadow-lg shadow-rose-900/40 hover:from-rose-500 hover:to-rose-600 transition disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#0F8A65] hover:bg-[#0c7354] py-3.5 text-xs font-bold text-white shadow-btn transition disabled:opacity-50"
             >
               <ShoppingBag className="h-4 w-4" />
               <span>
-                {item.isAvailable ? `Add to Order • $${totalPrice}` : "Currently Sold Out"}
+                {item.isAvailable ? `Add item • $${totalPrice}` : "Currently Unavailable"}
               </span>
             </button>
           </div>

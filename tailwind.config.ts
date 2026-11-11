@@ -10,54 +10,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
         brand: {
-          50: "#fff1f1",
-          100: "#ffe1e1",
-          200: "#ffc7c7",
-          300: "#ffa0a0",
-          400: "#f87171",
-          500: "#ef4444",
-          600: "#dc2626",
-          700: "#b91c1c",
-          800: "#991b1b",
-          900: "#7f1d1d",
-          accent: "#d97706",
+          DEFAULT: "#E23744", // Zomato Crimson
+          hover: "#cb202d",
+          orange: "#FC8019", // Swiggy Orange
+          green: "#1BA672",
         },
-        dining: {
-          surface: "var(--surface)",
-          card: "var(--card-bg)",
-          border: "var(--border-color)",
-          text: "var(--text-color)",
-          muted: "var(--muted-color)",
-          amber: "#f59e0b",
-          emerald: "#10b981",
-        }
+        food: {
+          veg: "#0F8A65",
+          nonveg: "#E43B4F",
+          rating: "#24963F",
+        },
+        surface: {
+          DEFAULT: "#FFFFFF",
+          muted: "#F4F5F7",
+          subtle: "#F8F9FA",
+          border: "#E8E8E8",
+        },
+        ink: {
+          900: "#1C1C1C", // Main bold headings
+          700: "#3E4152",
+          500: "#686B78", // Description text
+          400: "#93959F",
+          300: "#D4D5D9",
+        },
       },
       fontFamily: {
-        serif: ["var(--font-playfair)", "Georgia", "serif"],
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        heading: ["var(--font-heading)", "Plus Jakarta Sans", "sans-serif"],
+        mono: ["var(--font-mono)", "Geist Mono", "monospace"],
       },
-      keyframes: {
-        shimmer: {
-          "100%": {
-            transform: "translateX(100%)",
-          },
-        },
-        pulseGlow: {
-          "0%, 100%": { opacity: "1", transform: "scale(1)" },
-          "50%": { opacity: "0.85", transform: "scale(1.02)" },
-        },
-        ticketSlide: {
-          "0%": { opacity: "0", transform: "translateY(-10px) scale(0.98)" },
-          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
-        }
-      },
-      animation: {
-        shimmer: "shimmer 2s infinite",
-        pulseGlow: "pulseGlow 2s ease-in-out infinite",
-        ticketSlide: "ticketSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+      boxShadow: {
+        card: "0 2px 8px rgba(0, 0, 0, 0.08)",
+        elevated: "0 8px 24px rgba(0, 0, 0, 0.12)",
+        btn: "0 2px 4px rgba(0, 0, 0, 0.1)",
       },
     },
   },

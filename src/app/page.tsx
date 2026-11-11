@@ -1,11 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MenuHero } from "@/components/menu/MenuHero";
-import { CategoryTabs } from "@/components/menu/CategoryTabs";
 import { DishCard } from "@/components/menu/DishCard";
 import { useAppStore } from "@/lib/store";
-import { Utensils, AlertCircle, RefreshCw } from "lucide-react";
+import {
+  Utensils,
+  Search,
+  ShoppingBag,
+  ArrowRight,
+  Sparkles,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
 
 interface MenuItem {
   id: string;
@@ -39,10 +45,19 @@ export default function MenuPage() {
 
   const {
     searchQuery,
+    setSearchQuery,
     selectedCategory,
+    setSelectedCategory,
     vegOnly,
+    setVegOnly,
     veganOnly,
+    setVeganOnly,
     glutenFreeOnly,
+    setGlutenFreeOnly,
+    cart,
+    setIsCartOpen,
+    getCartCount,
+    getCartTotal,
   } = useAppStore();
 
   const fetchMenu = async () => {
@@ -67,15 +82,17 @@ export default function MenuPage() {
     fetchMenu();
   }, []);
 
+  const cartCount = getCartCount();
+  const cartTotal = getCartTotal();
+
   // Compute item counts per category
   const itemCounts: Record<string, number> = {};
   items.forEach((item) => {
     itemCounts[item.categoryId] = (itemCounts[item.categoryId] || 0) + 1;
   });
 
-  // Filter items based on active search, category, and dietary preferences
+  // Filter items
   const filteredItems = items.filter((item) => {
-    // 1. Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const match =
@@ -85,12 +102,6 @@ export default function MenuPage() {
       if (!match) return false;
     }
 
-    // 2. Category
-    if (selectedCategory !== "all") {
-      if (item.category?.slug !== selectedCategory) return false;
-    }
-
-    // 3. Dietary
     if (vegOnly && !item.isVegetarian) return false;
     if (veganOnly && !item.isVegan) return false;
     if (glutenFreeOnly && !item.isGlutenFree) return false;
@@ -98,68 +109,223 @@ export default function MenuPage() {
     return true;
   });
 
+  // Filter by selected category for main view if single category selected
+  const displayCategories =
+    selectedCategory === "all"
+      ? categories
+      : categories.filter((c) => c.slug === selectedCategory);
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-8">
-      {/* Hero section with search & dietary tags */}
-      <MenuHero />
-
-      {/* Category Navigation Pills */}
-      <div className="sticky top-16 z-30 -mx-4 px-4 py-2 bg-[#0f1115]/80 backdrop-blur-md sm:mx-0 sm:px-0">
-        <CategoryTabs categories={categories} itemCounts={itemCounts} />
-      </div>
-
-      {/* Main Menu Grid */}
-      {loading ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div
-              key={i}
-              className="h-80 animate-pulse rounded-3xl border border-white/5 bg-[#171b24] p-4"
-            >
-              <div className="h-44 rounded-2xl bg-white/5"></div>
-              <div className="mt-4 h-4 w-3/4 rounded bg-white/5"></div>
-              <div className="mt-2 h-3 w-1/2 rounded bg-white/5"></div>
-            </div>
-          ))}
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 font-sans">
+      {/* Restaurant Overview Header (Swiggy / Zomato outlet banner) */}
+      <div className="mb-8 rounded-2xl border border-[#E8E8E8] bg-[#F8F9FA] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-[#1C1C1C]">
+              DineDesk Restaurant & Kitchen
+            </h1>
+            <span className="rounded-full bg-[#E23744]/10 text-[#E23744] text-[11px] font-bold px-2 py-0.5">
+              Live Kitchen
+            </span>
+          </div>
+          <p className="text-xs text-[#686B78] font-medium">
+            Artisanal appetizers, charcoal grilled mains, handcrafted pastry desserts & beverages.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-semibold text-[#1C1C1C]">
+            <span className="flex items-center gap-1 text-[#24963F]">
+              <span>★</span> 4.8 (500+ reviews)
+            </span>
+            <span className="text-[#93959F]">•</span>
+            <span>20–25 mins delivery/prep time</span>
+            <span className="text-[#93959F]">•</span>
+            <span className="text-[#0F8A65]">Table Dine-in & Takeaway Available</span>
+          </div>
         </div>
-      ) : error ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-rose-500/20 bg-rose-500/5 p-12 text-center">
-          <AlertCircle className="h-10 w-10 text-rose-400 mb-2" />
-          <h3 className="text-lg font-bold text-white">Unable to Load Menu</h3>
-          <p className="mt-1 text-sm text-zinc-400">{error}</p>
+
+        {/* Quick Filter Buttons */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
-            onClick={fetchMenu}
-            className="mt-4 flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-xs font-semibold text-white hover:bg-rose-500 transition"
+            onClick={() => setVegOnly(!vegOnly)}
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition border ${
+              vegOnly
+                ? "bg-[#0F8A65] text-white border-[#0F8A65]"
+                : "bg-[#FFFFFF] text-[#3E4152] border-[#E8E8E8] hover:bg-[#F4F5F7]"
+            }`}
           >
-            <RefreshCw className="h-3.5 w-3.5" />
-            <span>Try Again</span>
+            <span className="veg-badge scale-75"></span>
+            <span>Veg Only</span>
+          </button>
+
+          <button
+            onClick={() => setVeganOnly(!veganOnly)}
+            className={`rounded-full px-3 py-1.5 text-xs font-bold transition border ${
+              veganOnly
+                ? "bg-[#0F8A65] text-white border-[#0F8A65]"
+                : "bg-[#FFFFFF] text-[#3E4152] border-[#E8E8E8] hover:bg-[#F4F5F7]"
+            }`}
+          >
+            Vegan
+          </button>
+
+          <button
+            onClick={() => setGlutenFreeOnly(!glutenFreeOnly)}
+            className={`rounded-full px-3 py-1.5 text-xs font-bold transition border ${
+              glutenFreeOnly
+                ? "bg-[#FC8019] text-white border-[#FC8019]"
+                : "bg-[#FFFFFF] text-[#3E4152] border-[#E8E8E8] hover:bg-[#F4F5F7]"
+            }`}
+          >
+            Gluten-Free
           </button>
         </div>
-      ) : filteredItems.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-white/5 bg-white/[0.02] p-16 text-center text-zinc-400">
-          <Utensils className="h-12 w-12 text-zinc-600 mb-3" />
-          <h3 className="text-base font-bold text-white">No dishes match your criteria</h3>
-          <p className="mt-1 text-xs text-zinc-400 max-w-sm">
-            Try resetting your dietary filters or searching with a different culinary keyword.
-          </p>
-        </div>
-      ) : (
-        <div>
-          <div className="mb-4 flex items-center justify-between text-xs text-zinc-400">
-            <span>
-              Showing <strong className="text-white">{filteredItems.length}</strong> culinary dishes
-            </span>
-            {selectedCategory !== "all" && (
-              <span className="capitalize text-rose-400 font-medium">
-                Category: {selectedCategory}
-              </span>
-            )}
+      </div>
+
+      {/* Main Split Layout: Left Sticky Category Nav (25%) + Right Dish Feed (75%) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Sidebar: Fast Category Navigator */}
+        <div className="lg:col-span-3 sticky top-20 hidden lg:block rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-3 shadow-sm">
+          <div className="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-[#93959F] border-b border-[#E8E8E8] mb-2">
+            Categories ({items.length} items)
           </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredItems.map((item) => (
-              <DishCard key={item.id} item={item} />
-            ))}
+          <div className="space-y-1">
+            <button
+              onClick={() => setSelectedCategory("all")}
+              className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-bold transition text-left ${
+                selectedCategory === "all"
+                  ? "bg-[#E23744] text-white shadow-sm"
+                  : "text-[#3E4152] hover:bg-[#F8F9FA] hover:text-[#E23744]"
+              }`}
+            >
+              <span>Full Menu</span>
+              <span className="tabular-nums font-mono text-[11px] opacity-80">
+                {items.length}
+              </span>
+            </button>
+
+            {categories.map((cat) => {
+              const isActive = selectedCategory === cat.slug;
+              const count = itemCounts[cat.id] || 0;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.slug)}
+                  className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-bold transition text-left ${
+                    isActive
+                      ? "bg-[#E23744] text-white shadow-sm"
+                      : "text-[#3E4152] hover:bg-[#F8F9FA] hover:text-[#E23744]"
+                  }`}
+                >
+                  <span className="truncate pr-2">{cat.name}</span>
+                  <span className="tabular-nums font-mono text-[11px] opacity-80 shrink-0">
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right Section: Grouped Dish Feed */}
+        <div className="lg:col-span-9 space-y-8">
+          {loading ? (
+            <div className="space-y-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="h-32 animate-pulse rounded-2xl bg-[#F4F5F7] p-4 flex gap-4"
+                >
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-1/3 bg-[#E8E8E8] rounded"></div>
+                    <div className="h-3 w-1/4 bg-[#E8E8E8] rounded"></div>
+                    <div className="h-3 w-3/4 bg-[#E8E8E8] rounded"></div>
+                  </div>
+                  <div className="h-24 w-32 bg-[#E8E8E8] rounded-xl"></div>
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-12 text-center">
+              <AlertCircle className="mx-auto h-8 w-8 text-[#E23744] mb-2" />
+              <h3 className="font-heading font-bold text-base text-[#1C1C1C]">
+                Unable to load menu feed
+              </h3>
+              <p className="mt-1 text-xs text-[#686B78]">{error}</p>
+              <button
+                onClick={fetchMenu}
+                className="mt-4 rounded-xl bg-[#E23744] px-4 py-2 text-xs font-bold text-white shadow-sm"
+              >
+                Retry Loading
+              </button>
+            </div>
+          ) : (
+            displayCategories.map((category) => {
+              const categoryItems = filteredItems.filter(
+                (item) => item.categoryId === category.id
+              );
+              if (categoryItems.length === 0) return null;
+
+              return (
+                <div
+                  key={category.id}
+                  id={category.slug}
+                  className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 shadow-sm"
+                >
+                  {/* Category Title Header */}
+                  <div className="pb-3 border-b border-[#E8E8E8] mb-2 flex items-baseline justify-between">
+                    <div>
+                      <h2 className="font-heading text-lg font-extrabold text-[#1C1C1C]">
+                        {category.name}
+                      </h2>
+                      {category.description && (
+                        <p className="text-xs text-[#686B78] mt-0.5">
+                          {category.description}
+                        </p>
+                      )}
+                    </div>
+                    <span className="text-xs font-bold text-[#686B78]">
+                      {categoryItems.length} items
+                    </span>
+                  </div>
+
+                  {/* Horizontal Dish Cards Feed */}
+                  <div className="divide-y divide-[#E8E8E8]">
+                    {categoryItems.map((item) => (
+                      <DishCard key={item.id} item={item} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Floating Bottom Cart Bar (Swiggy / Zomato standard) */}
+      {cartCount > 0 && (
+        <div className="fixed bottom-4 left-4 right-4 z-40 max-w-2xl mx-auto animate-in slide-in-from-bottom duration-300">
+          <div className="flex items-center justify-between rounded-2xl bg-[#0F8A65] text-white p-3.5 sm:p-4 shadow-elevated">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+                <ShoppingBag className="h-5 w-5" />
+              </div>
+              <div>
+                <span className="font-extrabold text-sm tracking-wide">
+                  {cartCount} {cartCount === 1 ? "ITEM" : "ITEMS"} ADDED
+                </span>
+                <p className="font-mono text-xs font-semibold tabular-nums text-white/90">
+                  Total: ${cartTotal.toFixed(2)} plus taxes
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="flex items-center gap-1.5 rounded-xl bg-[#FFFFFF] text-[#0F8A65] font-extrabold text-xs px-5 py-2.5 shadow-sm hover:bg-white/90 transition active:scale-95"
+            >
+              <span>View Cart</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       )}

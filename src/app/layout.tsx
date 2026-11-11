@@ -1,25 +1,33 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 
-const playfair = Playfair_Display({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-heading",
   display: "swap",
+  weight: ["500", "600", "700", "800"],
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "DineDesk | CodSoft Task 2 — Restaurant Platform",
+  title: "DineDesk | Restaurant Ordering, Table Reservations & KDS Platform",
   description:
-    "Production-grade restaurant ordering and table management platform with real-time Kitchen Display System (KDS), interactive menu, table booking, and admin analytics.",
+    "A commercial-grade restaurant ordering and table management platform. Digital menu, live cart, table reservation, and real-time Kitchen Display System.",
 };
 
 export default function RootLayout({
@@ -28,27 +36,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
-        className={`${playfair.variable} ${inter.variable} antialiased min-h-screen bg-[#0f1115] text-[#f8fafc] flex flex-col`}
+        className={`${jakarta.variable} ${inter.variable} ${geistMono.variable} antialiased min-h-screen bg-[#FFFFFF] text-[#1C1C1C] font-sans selection:bg-[#E23744]/20 selection:text-[#E23744] flex flex-col`}
       >
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 bg-[#FFFFFF]">{children}</main>
         <CartDrawer />
 
-        {/* Footer */}
-        <footer className="mt-auto border-t border-white/5 bg-[#0b0d11] py-8 text-center text-xs text-zinc-500">
-          <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Clean Commercial Footer */}
+        <footer className="mt-auto border-t border-[#E8E8E8] bg-[#F8F9FA] py-8 text-xs text-[#686B78]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-serif font-bold text-white text-sm">DineDesk</span>
+              <span className="font-heading font-extrabold text-[#E23744] text-base">
+                DineDesk
+              </span>
               <span>— CodSoft Web Development Task 2</span>
             </div>
-            <div className="flex items-center gap-4 text-zinc-400">
-              <span>PostgreSQL & Prisma</span>
-              <span>•</span>
-              <span>Real-time SSE Kitchen Sync</span>
-              <span>•</span>
+            <div className="flex items-center gap-4 text-[#93959F] text-xs">
               <span>Next.js 15 & React 19</span>
+              <span>•</span>
+              <span>PostgreSQL + Prisma</span>
+              <span>•</span>
+              <span>Real-Time SSE Kitchen Dispatch</span>
             </div>
           </div>
         </footer>

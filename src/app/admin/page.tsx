@@ -3,22 +3,21 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
-  LayoutDashboard,
+  SlidersHorizontal,
   DollarSign,
   TrendingUp,
   Clock,
-  UtensilsCrossed,
+  Utensils,
   Plus,
   Edit2,
   Trash2,
-  CheckCircle2,
-  AlertCircle,
   Eye,
   EyeOff,
   Users,
   CalendarCheck,
   RefreshCw,
-  Sparkles,
+  MapPin,
+  CheckCircle2,
 } from "lucide-react";
 
 interface MenuItem {
@@ -68,7 +67,7 @@ export default function AdminPage() {
   const [reservations, setReservations] = useState<ReservationData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Add Item Modal state
+  // Add Item Modal
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newDishName, setNewDishName] = useState("");
   const [newDishDesc, setNewDishDesc] = useState("");
@@ -120,7 +119,6 @@ export default function AdminPage() {
     loadAllData();
   }, []);
 
-  // Quick toggle menu item availability
   const toggleItemAvailability = async (id: string, current: boolean) => {
     try {
       setMenuItems((prev) =>
@@ -138,13 +136,12 @@ export default function AdminPage() {
     }
   };
 
-  // Quick edit item price
   const updatePrice = async (id: string, currentPrice: number) => {
     const val = prompt("Enter new price in USD:", currentPrice.toString());
     if (!val) return;
     const num = parseFloat(val);
     if (isNaN(num) || num <= 0) {
-      alert("Invalid price");
+      alert("Invalid price format");
       return;
     }
 
@@ -164,9 +161,8 @@ export default function AdminPage() {
     }
   };
 
-  // Delete item
   const deleteItem = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this dish from the menu?")) return;
+    if (!confirm("Are you sure you want to remove this dish?")) return;
     try {
       setMenuItems((prev) => prev.filter((item) => item.id !== id));
       await fetch(`/api/menu/${id}`, { method: "DELETE" });
@@ -176,7 +172,6 @@ export default function AdminPage() {
     }
   };
 
-  // Add new dish
   const handleAddDish = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -202,7 +197,7 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to create dish");
+        throw new Error(data.error || "Failed to add dish");
       }
 
       setIsAddOpen(false);
@@ -215,7 +210,6 @@ export default function AdminPage() {
     }
   };
 
-  // Update Table Status
   const updateTableStatus = async (
     tableId: string,
     status: "AVAILABLE" | "RESERVED" | "OCCUPIED"
@@ -234,7 +228,6 @@ export default function AdminPage() {
     }
   };
 
-  // Update Reservation Status
   const updateReservationStatus = async (
     id: string,
     status: "CONFIRMED" | "SEATED" | "CANCELLED" | "COMPLETED"
@@ -255,39 +248,38 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-8 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E8E8E8]">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-400 border border-rose-500/20 mb-2">
-            <LayoutDashboard className="h-3.5 w-3.5" />
-            <span>Executive Command Center</span>
-          </div>
-          <h1 className="text-2xl font-bold font-serif text-white sm:text-3xl">
-            Restaurant Operations & Analytics
+          <span className="text-xs font-bold text-[#E23744] uppercase tracking-wider">
+            Restaurant Operations
+          </span>
+          <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-[#1C1C1C] mt-0.5">
+            Admin & Inventory Dashboard
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
-            Real-time revenue telemetry, menu catalog inventory management, and floor control.
+          <p className="text-xs text-[#686B78] mt-1">
+            Real-time revenue metrics, menu catalog stock controls, and floor table management.
           </p>
         </div>
 
         <button
           onClick={loadAllData}
-          className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-3.5 py-2 text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/10 transition self-start sm:self-auto"
+          className="flex items-center gap-2 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] px-4 py-2 text-xs font-bold text-[#1C1C1C] hover:bg-[#F8F9FA] transition"
         >
           <RefreshCw className="h-3.5 w-3.5" />
-          <span>Refresh Metrics</span>
+          <span>Refresh Data</span>
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+      <div className="flex items-center gap-2 border-b border-[#E8E8E8] pb-2">
         <button
           onClick={() => setActiveTab("analytics")}
-          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition ${
             activeTab === "analytics"
-              ? "bg-rose-600 text-white shadow-md shadow-rose-950/40"
-              : "text-zinc-400 hover:text-white"
+              ? "bg-[#E23744] text-white shadow-sm"
+              : "text-[#686B78] hover:bg-[#F8F9FA]"
           }`}
         >
           <TrendingUp className="h-4 w-4" />
@@ -296,22 +288,22 @@ export default function AdminPage() {
 
         <button
           onClick={() => setActiveTab("menu")}
-          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition ${
             activeTab === "menu"
-              ? "bg-rose-600 text-white shadow-md shadow-rose-950/40"
-              : "text-zinc-400 hover:text-white"
+              ? "bg-[#E23744] text-white shadow-sm"
+              : "text-[#686B78] hover:bg-[#F8F9FA]"
           }`}
         >
-          <UtensilsCrossed className="h-4 w-4" />
+          <Utensils className="h-4 w-4" />
           <span>Menu Inventory ({menuItems.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab("tables")}
-          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition ${
             activeTab === "tables"
-              ? "bg-rose-600 text-white shadow-md shadow-rose-950/40"
-              : "text-zinc-400 hover:text-white"
+              ? "bg-[#E23744] text-white shadow-sm"
+              : "text-[#686B78] hover:bg-[#F8F9FA]"
           }`}
         >
           <CalendarCheck className="h-4 w-4" />
@@ -319,150 +311,91 @@ export default function AdminPage() {
         </button>
       </div>
 
-      {/* TAB 1: Analytics & Metrics */}
+      {/* TAB 1: Analytics */}
       {activeTab === "analytics" && (
         <div className="space-y-6">
-          {/* 4 Top KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-3xl border border-white/10 bg-[#151922] p-5 shadow-xl">
-              <div className="flex items-center justify-between text-zinc-400">
-                <span className="text-xs font-medium">Total Daily Revenue</span>
-                <DollarSign className="h-4 w-4 text-emerald-400" />
+            <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-5 shadow-sm">
+              <div className="flex items-center justify-between text-[#686B78]">
+                <span className="text-xs font-bold">Daily Revenue</span>
+                <DollarSign className="h-4 w-4 text-[#0F8A65]" />
               </div>
-              <div className="mt-2 text-2xl font-bold font-serif text-white">
+              <div className="mt-2 text-2xl font-heading font-extrabold text-[#1C1C1C] tabular-nums">
                 ${metrics?.totalRevenue ? metrics.totalRevenue.toFixed(2) : "370.60"}
               </div>
-              <span className="text-[11px] text-emerald-400 flex items-center gap-1 mt-1 font-medium">
-                <TrendingUp className="h-3 w-3" /> +18.4% from yesterday
+              <span className="text-xs font-bold text-[#0F8A65] flex items-center gap-1 mt-1">
+                <TrendingUp className="h-3.5 w-3.5" /> +18.4% from yesterday
               </span>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-[#151922] p-5 shadow-xl">
-              <div className="flex items-center justify-between text-zinc-400">
-                <span className="text-xs font-medium">Active Kitchen Tickets</span>
-                <Clock className="h-4 w-4 text-rose-400" />
+            <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-5 shadow-sm">
+              <div className="flex items-center justify-between text-[#686B78]">
+                <span className="text-xs font-bold">Active Orders</span>
+                <Clock className="h-4 w-4 text-[#FC8019]" />
               </div>
-              <div className="mt-2 text-2xl font-bold font-serif text-white">
+              <div className="mt-2 text-2xl font-heading font-extrabold text-[#1C1C1C] tabular-nums">
                 {metrics?.activeOrdersCount ?? 3} active
               </div>
-              <span className="text-[11px] text-zinc-400 mt-1">Across line cook stations</span>
+              <span className="text-xs text-[#686B78] mt-1 block">In preparation queue</span>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-[#151922] p-5 shadow-xl">
-              <div className="flex items-center justify-between text-zinc-400">
-                <span className="text-xs font-medium">Table Occupancy Rate</span>
-                <Users className="h-4 w-4 text-amber-400" />
+            <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-5 shadow-sm">
+              <div className="flex items-center justify-between text-[#686B78]">
+                <span className="text-xs font-bold">Table Occupancy</span>
+                <Users className="h-4 w-4 text-[#2563EB]" />
               </div>
-              <div className="mt-2 text-2xl font-bold font-serif text-white">
+              <div className="mt-2 text-2xl font-heading font-extrabold text-[#1C1C1C] tabular-nums">
                 {metrics?.occupancyRate ?? 38}%
               </div>
-              <span className="text-[11px] text-amber-300 mt-1">
-                {metrics?.tableStats?.occupied ?? 1} occupied • {metrics?.tableStats?.reserved ?? 2}{" "}
-                reserved
+              <span className="text-xs text-[#686B78] mt-1 block">
+                {metrics?.tableStats?.occupied ?? 1} occupied • {metrics?.tableStats?.reserved ?? 2} reserved
               </span>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-[#151922] p-5 shadow-xl">
-              <div className="flex items-center justify-between text-zinc-400">
-                <span className="text-xs font-medium">Average Prep Time</span>
-                <Sparkles className="h-4 w-4 text-blue-400" />
+            <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-5 shadow-sm">
+              <div className="flex items-center justify-between text-[#686B78]">
+                <span className="text-xs font-bold">Average Prep Time</span>
+                <Clock className="h-4 w-4 text-[#0F8A65]" />
               </div>
-              <div className="mt-2 text-2xl font-bold font-serif text-white">
+              <div className="mt-2 text-2xl font-heading font-extrabold text-[#1C1C1C] tabular-nums">
                 {metrics?.avgPrepMinutes ?? 16} mins
               </div>
-              <span className="text-[11px] text-emerald-400 mt-1">98% on-time pace</span>
+              <span className="text-xs text-[#0F8A65] font-bold mt-1 block">98% on-time pace</span>
             </div>
           </div>
 
-          {/* Popular Dishes Leaderboard & Order Distribution */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Popular Dishes (7 cols) */}
-            <div className="lg:col-span-7 rounded-3xl border border-white/10 bg-[#151922] p-6 shadow-xl">
-              <h3 className="font-serif font-bold text-base text-white mb-4">
-                Top Selling Culinary Dishes
-              </h3>
-              <div className="divide-y divide-white/5">
-                {metrics?.popularDishes?.map((dish: any, idx: number) => (
-                  <div key={idx} className="py-3 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono text-zinc-500 font-bold w-4">#{idx + 1}</span>
-                      <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-zinc-900 shrink-0">
-                        <Image
-                          src={dish.imageUrl}
-                          alt={dish.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-white">{dish.name}</h5>
-                        <span className="text-[10px] text-zinc-400">
-                          {dish.count} orders fulfilled
-                        </span>
-                      </div>
+          {/* Popular Dishes Leaderboard */}
+          <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 shadow-sm">
+            <h3 className="font-heading text-base font-extrabold text-[#1C1C1C] mb-4">
+              Top Selling Dishes
+            </h3>
+            <div className="divide-y divide-[#E8E8E8]">
+              {metrics?.popularDishes?.map((dish: any, idx: number) => (
+                <div key={idx} className="py-3 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[#93959F] font-bold w-5">#{idx + 1}</span>
+                    <div className="relative h-11 w-11 overflow-hidden rounded-xl bg-[#F4F5F7] shrink-0">
+                      <Image
+                        src={dish.imageUrl}
+                        alt={dish.name}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
-                    <span className="font-serif font-bold text-amber-400">
-                      ${dish.revenue.toFixed(2)}
-                    </span>
+                    <div>
+                      <h4 className="font-heading font-bold text-[#1C1C1C] text-xs">
+                        {dish.name}
+                      </h4>
+                      <span className="text-[11px] text-[#686B78]">
+                        {dish.count} orders fulfilled
+                      </span>
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Order Distribution (5 cols) */}
-            <div className="lg:col-span-5 rounded-3xl border border-white/10 bg-[#151922] p-6 shadow-xl">
-              <h3 className="font-serif font-bold text-base text-white mb-4">
-                Ticket Pipeline Volume
-              </h3>
-              <div className="space-y-3 text-xs">
-                <div>
-                  <div className="flex justify-between text-zinc-300 mb-1">
-                    <span>Pending Intake</span>
-                    <strong className="text-amber-400 font-bold">
-                      {metrics?.statusCounts?.pending ?? 1}
-                    </strong>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
-                    <div className="h-full bg-amber-500 rounded-full w-1/4"></div>
-                  </div>
+                  <span className="font-mono font-bold text-[#0F8A65] text-sm tabular-nums">
+                    ${dish.revenue.toFixed(2)}
+                  </span>
                 </div>
-
-                <div>
-                  <div className="flex justify-between text-zinc-300 mb-1">
-                    <span>Cooking on Line (In Prep)</span>
-                    <strong className="text-blue-400 font-bold">
-                      {metrics?.statusCounts?.preparing ?? 1}
-                    </strong>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full w-2/5"></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-zinc-300 mb-1">
-                    <span>Ready at Pass</span>
-                    <strong className="text-emerald-400 font-bold">
-                      {metrics?.statusCounts?.ready ?? 1}
-                    </strong>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
-                    <div className="h-full bg-emerald-500 rounded-full w-1/3"></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-zinc-300 mb-1">
-                    <span>Completed / Served</span>
-                    <strong className="text-zinc-400 font-bold">
-                      {metrics?.statusCounts?.served ?? 1}
-                    </strong>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
-                    <div className="h-full bg-zinc-600 rounded-full w-1/2"></div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -470,42 +403,43 @@ export default function AdminPage() {
 
       {/* TAB 2: Menu Inventory Management */}
       {activeTab === "menu" && (
-        <div className="rounded-3xl border border-white/10 bg-[#151922] p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between pb-4 border-b border-white/10">
+        <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-4 border-b border-[#E8E8E8]">
             <div>
-              <h3 className="font-serif font-bold text-lg text-white">Menu Catalog & Inventory</h3>
-              <p className="text-xs text-zinc-400">
-                Toggle dish availability in real time, adjust prices, or introduce new seasonal creations.
+              <h3 className="font-heading text-lg font-bold text-[#1C1C1C]">
+                Menu Inventory & Pricing
+              </h3>
+              <p className="text-xs text-[#686B78]">
+                Toggle dish availability in real time, edit prices, or add new dishes to catalog.
               </p>
             </div>
             <button
               onClick={() => setIsAddOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-rose-500 transition shadow-md shadow-rose-950/40"
+              className="flex items-center gap-1.5 rounded-xl bg-[#E23744] hover:bg-[#cb202d] px-4 py-2 text-xs font-bold text-white shadow-sm transition"
             >
               <Plus className="h-4 w-4" />
               <span>Add New Dish</span>
             </button>
           </div>
 
-          {/* Dishes Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-white/[0.03] text-zinc-400 uppercase tracking-wider font-semibold">
+              <thead className="bg-[#F8F9FA] text-[#686B78] uppercase tracking-wider font-bold text-[11px]">
                 <tr>
                   <th className="p-3">Dish</th>
                   <th className="p-3">Category</th>
                   <th className="p-3">Price</th>
                   <th className="p-3">Dietary</th>
-                  <th className="p-3">Status</th>
+                  <th className="p-3">Stock Status</th>
                   <th className="p-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-zinc-300">
+              <tbody className="divide-y divide-[#E8E8E8] text-[#1C1C1C]">
                 {menuItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-white/[0.02]">
+                  <tr key={item.id} className="hover:bg-[#F8F9FA]">
                     <td className="p-3">
                       <div className="flex items-center gap-3">
-                        <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-zinc-900 shrink-0">
+                        <div className="relative h-10 w-10 overflow-hidden rounded-lg bg-[#F4F5F7] shrink-0">
                           <Image
                             src={item.imageUrl}
                             alt={item.name}
@@ -514,31 +448,31 @@ export default function AdminPage() {
                           />
                         </div>
                         <div>
-                          <strong className="text-white block">{item.name}</strong>
-                          <span className="text-[11px] text-zinc-500">
+                          <strong className="text-[#1C1C1C] block text-xs">{item.name}</strong>
+                          <span className="text-[11px] text-[#686B78]">
                             {item.preparationTime}m prep • {item.calories ?? 0} cal
                           </span>
                         </div>
                       </div>
                     </td>
-                    <td className="p-3 text-zinc-400">{item.category?.name}</td>
-                    <td className="p-3 font-serif font-bold text-amber-400">
+                    <td className="p-3 text-[#686B78] font-medium">{item.category?.name}</td>
+                    <td className="p-3 font-mono font-bold text-[#1C1C1C] tabular-nums">
                       ${item.price.toFixed(2)}
                     </td>
                     <td className="p-3">
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 text-[10px]">
                         {item.isVegetarian && (
-                          <span className="rounded bg-emerald-500/20 px-1 text-[10px] text-emerald-400 font-bold">
+                          <span className="rounded bg-[#0F8A65]/10 px-1.5 py-0.5 text-[#0F8A65] font-bold">
                             Veg
                           </span>
                         )}
                         {item.isVegan && (
-                          <span className="rounded bg-teal-500/20 px-1 text-[10px] text-teal-300 font-bold">
+                          <span className="rounded bg-[#0F8A65]/10 px-1.5 py-0.5 text-[#0F8A65] font-bold">
                             Vegan
                           </span>
                         )}
                         {item.isGlutenFree && (
-                          <span className="rounded bg-amber-500/20 px-1 text-[10px] text-amber-300 font-bold">
+                          <span className="rounded bg-[#FC8019]/10 px-1.5 py-0.5 text-[#FC8019] font-bold">
                             GF
                           </span>
                         )}
@@ -547,10 +481,10 @@ export default function AdminPage() {
                     <td className="p-3">
                       <button
                         onClick={() => toggleItemAvailability(item.id, item.isAvailable)}
-                        className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold transition ${
+                        className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold transition ${
                           item.isAvailable
-                            ? "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"
-                            : "bg-rose-500/20 text-rose-300 hover:bg-rose-500/30"
+                            ? "bg-[#0F8A65]/10 text-[#0F8A65]"
+                            : "bg-rose-100 text-[#E23744]"
                         }`}
                       >
                         {item.isAvailable ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
@@ -558,17 +492,17 @@ export default function AdminPage() {
                       </button>
                     </td>
                     <td className="p-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => updatePrice(item.id, item.price)}
-                          className="rounded-lg p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 transition"
+                          className="rounded-lg p-1.5 text-[#686B78] hover:bg-[#F4F5F7] hover:text-[#1C1C1C]"
                           title="Edit price"
                         >
                           <Edit2 className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => deleteItem(item.id)}
-                          className="rounded-lg p-1.5 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition"
+                          className="rounded-lg p-1.5 text-[#93959F] hover:bg-rose-50 hover:text-[#E23744]"
                           title="Delete dish"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -583,59 +517,59 @@ export default function AdminPage() {
 
           {/* Add Dish Modal */}
           {isAddOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-              <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#161a23] p-6 shadow-2xl text-white space-y-4">
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <h3 className="font-serif font-bold text-lg">Add New Culinary Dish</h3>
-                  <button onClick={() => setIsAddOpen(false)} className="text-zinc-400 hover:text-white">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <div className="w-full max-w-lg rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 shadow-2xl text-[#1C1C1C] space-y-4">
+                <div className="flex items-center justify-between border-b border-[#E8E8E8] pb-3">
+                  <h3 className="font-heading text-lg font-bold">Add New Menu Dish</h3>
+                  <button onClick={() => setIsAddOpen(false)} className="text-[#93959F] hover:text-[#1C1C1C]">
                     ✕
                   </button>
                 </div>
 
                 <form onSubmit={handleAddDish} className="space-y-3 text-xs">
                   <div>
-                    <label className="block text-zinc-400 mb-1">Dish Name</label>
+                    <label className="block text-[#686B78] font-bold mb-1">Dish Name</label>
                     <input
                       type="text"
                       required
                       value={newDishName}
                       onChange={(e) => setNewDishName(e.target.value)}
-                      placeholder="e.g. Saffron Chilean Sea Bass"
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-white"
+                      placeholder="e.g. Butter Garlic Naan"
+                      className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-zinc-400 mb-1">Description</label>
+                    <label className="block text-[#686B78] font-bold mb-1">Description</label>
                     <textarea
                       required
                       rows={2}
                       value={newDishDesc}
                       onChange={(e) => setNewDishDesc(e.target.value)}
-                      placeholder="Artisanal flavor notes, origin of ingredients, preparation method..."
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-white"
+                      placeholder="Taste notes, prep style, ingredients..."
+                      className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-zinc-400 mb-1">Price (USD)</label>
+                      <label className="block text-[#686B78] font-bold mb-1">Price ($)</label>
                       <input
                         type="number"
                         step="0.01"
                         required
                         value={newDishPrice}
                         onChange={(e) => setNewDishPrice(e.target.value)}
-                        placeholder="28.50"
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-white"
+                        placeholder="14.50"
+                        className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5 font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-zinc-400 mb-1">Category</label>
+                      <label className="block text-[#686B78] font-bold mb-1">Category</label>
                       <select
                         value={newDishCategory}
                         onChange={(e) => setNewDishCategory(e.target.value)}
-                        className="w-full rounded-xl border border-white/10 bg-[#1e2330] p-2.5 text-white"
+                        className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5"
                       >
                         {categories.map((c) => (
                           <option key={c.id} value={c.id}>
@@ -647,18 +581,17 @@ export default function AdminPage() {
                   </div>
 
                   <div>
-                    <label className="block text-zinc-400 mb-1">Image URL (Unsplash)</label>
+                    <label className="block text-[#686B78] font-bold mb-1">Image URL</label>
                     <input
                       type="url"
                       required
                       value={newDishImg}
                       onChange={(e) => setNewDishImg(e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.05] p-2.5 text-white"
+                      className="w-full rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-2.5"
                     />
                   </div>
 
-                  {/* Dietary Checkboxes */}
-                  <div className="flex gap-4 pt-1">
+                  <div className="flex gap-4 pt-1 font-bold">
                     <label className="flex items-center gap-1.5 cursor-pointer">
                       <input
                         type="checkbox"
@@ -689,15 +622,15 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={() => setIsAddOpen(false)}
-                      className="flex-1 rounded-xl bg-white/10 py-2.5 font-bold text-zinc-300"
+                      className="flex-1 rounded-xl bg-[#F4F5F7] py-2.5 font-bold text-[#686B78]"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 rounded-xl bg-rose-600 py-2.5 font-bold text-white hover:bg-rose-500"
+                      className="flex-1 rounded-xl bg-[#E23744] hover:bg-[#cb202d] py-2.5 font-bold text-white shadow-sm"
                     >
-                      Save to Menu
+                      Save Dish
                     </button>
                   </div>
                 </form>
@@ -707,53 +640,51 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* TAB 3: Floor & Reservation Management */}
+      {/* TAB 3: Floor & Tables */}
       {activeTab === "tables" && (
         <div className="space-y-6">
-          {/* Floor Tables Status Grid */}
-          <div className="rounded-3xl border border-white/10 bg-[#151922] p-6 shadow-xl">
-            <h3 className="font-serif font-bold text-base text-white mb-2">
-              Live Floor Layout Status
+          <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 shadow-sm">
+            <h3 className="font-heading text-base font-extrabold text-[#1C1C1C] mb-1">
+              Live Floor Layout Overrides
             </h3>
-            <p className="text-xs text-zinc-400 mb-4">
-              Real-time table occupancy. Click status button to toggle table state.
+            <p className="text-xs text-[#686B78] mb-4">
+              Click status to manually toggle table state between Open, Reserved, and Occupied.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {tables.map((table) => (
                 <div
                   key={table.id}
-                  className="rounded-2xl border border-white/10 bg-[#191d28] p-4 text-xs space-y-2"
+                  className="rounded-xl border border-[#E8E8E8] bg-[#F8F9FA] p-4 text-xs space-y-2.5"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-serif font-bold text-white text-sm">
+                    <strong className="font-heading text-sm text-[#1C1C1C]">
                       Table #{table.tableNumber}
-                    </span>
+                    </strong>
                     <span
                       className={`h-2.5 w-2.5 rounded-full ${
                         table.status === "AVAILABLE"
-                          ? "bg-emerald-400"
+                          ? "bg-[#0F8A65]"
                           : table.status === "RESERVED"
-                          ? "bg-amber-400"
-                          : "bg-rose-500"
+                          ? "bg-[#FC8019]"
+                          : "bg-[#93959F]"
                       }`}
                     ></span>
                   </div>
 
-                  <div className="text-[11px] text-zinc-400">
-                    <span>{table.location}</span> • <span>Seats {table.capacity}</span>
+                  <div className="text-xs text-[#686B78]">
+                    <span>{table.location}</span> • <span>{table.capacity} Seater</span>
                   </div>
 
-                  {/* Quick Toggle Controls */}
                   <div className="grid grid-cols-3 gap-1 pt-1">
                     {(["AVAILABLE", "RESERVED", "OCCUPIED"] as const).map((st) => (
                       <button
                         key={st}
                         onClick={() => updateTableStatus(table.id, st)}
-                        className={`rounded-lg py-1 text-[10px] font-bold transition ${
+                        className={`rounded-lg py-1 text-[10px] uppercase font-bold transition ${
                           table.status === st
-                            ? "bg-rose-600 text-white"
-                            : "bg-white/5 text-zinc-400 hover:text-white"
+                            ? "bg-[#1C1C1C] text-white shadow-sm"
+                            : "bg-[#FFFFFF] text-[#686B78] border border-[#E8E8E8] hover:bg-[#F4F5F7]"
                         }`}
                       >
                         {st.slice(0, 5)}
@@ -765,56 +696,56 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Active Reservations Schedule */}
-          <div className="rounded-3xl border border-white/10 bg-[#151922] p-6 shadow-xl">
-            <h3 className="font-serif font-bold text-base text-white mb-2">
-              Guest Reservation Bookings
+          {/* Active Reservations */}
+          <div className="rounded-2xl border border-[#E8E8E8] bg-[#FFFFFF] p-6 shadow-sm">
+            <h3 className="font-heading text-base font-extrabold text-[#1C1C1C] mb-1">
+              Active Table Reservations
             </h3>
-            <p className="text-xs text-zinc-400 mb-4">
-              Today&apos;s guest schedule. Seat guests upon arrival or manage cancellations.
+            <p className="text-xs text-[#686B78] mb-4">
+              Seat arriving diners or process cancellations directly with floor map synchronization.
             </p>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-white/[0.03] text-zinc-400 uppercase tracking-wider font-semibold">
+                <thead className="bg-[#F8F9FA] text-[#686B78] uppercase tracking-wider font-bold text-[11px]">
                   <tr>
-                    <th className="p-3">Guest</th>
+                    <th className="p-3">Customer</th>
                     <th className="p-3">Table</th>
-                    <th className="p-3">Date & Slot</th>
-                    <th className="p-3">Party Size</th>
+                    <th className="p-3">Slot</th>
+                    <th className="p-3">Guests</th>
                     <th className="p-3">Status</th>
                     <th className="p-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 text-zinc-300">
+                <tbody className="divide-y divide-[#E8E8E8] text-[#1C1C1C]">
                   {reservations.map((res) => (
-                    <tr key={res.id} className="hover:bg-white/[0.02]">
+                    <tr key={res.id} className="hover:bg-[#F8F9FA]">
                       <td className="p-3">
-                        <strong className="text-white block">{res.customerName}</strong>
-                        <span className="text-[11px] text-zinc-500">
+                        <strong className="text-[#1C1C1C] block text-xs">{res.customerName}</strong>
+                        <span className="text-[11px] text-[#686B78]">
                           {res.customerPhone} • {res.customerEmail}
                         </span>
                         {res.specialRequests && (
-                          <span className="block text-[10px] text-rose-300 italic">
+                          <span className="block text-[11px] text-[#E23744] italic">
                             &quot;{res.specialRequests}&quot;
                           </span>
                         )}
                       </td>
-                      <td className="p-3 font-semibold text-amber-300">
+                      <td className="p-3 font-bold text-[#E23744]">
                         Table #{res.table?.tableNumber} ({res.table?.location})
                       </td>
                       <td className="p-3">
                         {res.reservationDate} at <strong>{res.timeSlot}</strong>
                       </td>
-                      <td className="p-3">{res.guestCount} Guests</td>
+                      <td className="p-3 font-semibold">{res.guestCount} Diners</td>
                       <td className="p-3">
                         <span
-                          className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
                             res.status === "SEATED"
-                              ? "bg-emerald-500/20 text-emerald-300"
+                              ? "bg-[#0F8A65]/10 text-[#0F8A65]"
                               : res.status === "CONFIRMED"
-                              ? "bg-amber-500/20 text-amber-300"
-                              : "bg-zinc-500/20 text-zinc-400"
+                              ? "bg-[#FC8019]/10 text-[#FC8019]"
+                              : "bg-gray-100 text-[#93959F]"
                           }`}
                         >
                           {res.status}
@@ -825,15 +756,15 @@ export default function AdminPage() {
                           {res.status === "CONFIRMED" && (
                             <button
                               onClick={() => updateReservationStatus(res.id, "SEATED")}
-                              className="rounded-lg bg-emerald-600/80 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-emerald-500 transition"
+                              className="rounded-lg bg-[#0F8A65] px-3 py-1 text-xs font-bold text-white hover:bg-[#0c7354] transition shadow-sm"
                             >
-                              Seat Guest
+                              Seat Diner
                             </button>
                           )}
                           {res.status !== "CANCELLED" && res.status !== "COMPLETED" && (
                             <button
                               onClick={() => updateReservationStatus(res.id, "CANCELLED")}
-                              className="rounded-lg bg-white/5 px-2 py-1 text-[11px] text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition"
+                              className="rounded-lg border border-[#E8E8E8] bg-[#FFFFFF] px-2.5 py-1 text-xs font-medium text-[#686B78] hover:text-[#E23744] hover:bg-rose-50 transition"
                             >
                               Cancel
                             </button>
