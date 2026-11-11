@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #0f1115;
+    --foreground: #f8fafc;
+    --surface: #181b21;
+    --surface-elevated: #222630;
+    --card-bg: #1a1e26;
+    --border-color: #2e3442;
+    --text-color: #f8fafc;
+    --muted-color: #94a3b8;
+    --brand-primary: #e11d48;
+    --brand-accent: #f59e0b;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #111419;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a313d;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3e4859;
+  }
+}
+
+.glass-panel {
+  background: rgba(26, 30, 38, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-dropdown {
+  background: rgba(18, 22, 28, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.food-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.food-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(245, 158, 11, 0.2);
+}
+
+.kds-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.kds-card:hover {
+  transform: translateY(-2px);
+}
