@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { dataStore } from "@/lib/data-store";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const item = await prisma.menuItem.findUnique({
-      where: { id },
-      include: { category: true },
-    });
+    const item = dataStore.getMenuItemById(id);
 
     if (!item) {
       return NextResponse.json(
@@ -38,11 +35,13 @@ export async function PATCH(
     const { id } = await params;
     const body = await req.json();
 
-    const updated = await prisma.menuItem.update({
-      where: { id },
-      data: body,
-      include: { category: true },
-    });
+    const updated = dataStore.updateMenuItem(id, body);
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, error: "Item not found" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({ success: true, item: updated });
   } catch (error: any) {
@@ -60,9 +59,13 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await prisma.menuItem.delete({
-      where: { id },
-    });
+    const deleted = dataStore.deleteMenuItem(id);
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, error: "Item not found" },
+        { status: 404 }
+      );
+    }
     return NextResponse.json({ success: true, message: "Item deleted" });
   } catch (error: any) {
     return NextResponse.json(

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { dataStore } from "@/lib/data-store";
 import { UpdateReservationStatusSchema } from "@/lib/validations";
-import { realtimeDispatcher } from "@/lib/events";
-import { ReservationStatus, TableStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -15,33 +13,14 @@ export async function PATCH(
     const body = await req.json();
     const validated = UpdateReservationStatusSchema.parse(body);
 
-    const updated = await prisma.$transaction(async (tx) => {
-      const res = await tx.reservation.update({
-        where: { id },
-        data: { status: validated.status },
-        include: { table: true },
-      });
+    const updated = dataStore.updateReservationStatus(id, validated.status);
 
-      if (validated.status === ReservationStatus.SEATED) {
-        await tx.table.update({
-          where: { id: res.tableId },
-          data: { status: TableStatus.OCCUPIED },
-        });
-      } else if (
-        validated.status === ReservationStatus.COMPLETED ||
-        validated.status === ReservationStatus.CANCELLED
-      ) {
-        // Return table to available if no other reservations or active orders
-        await tx.table.update({
-          where: { id: res.tableId },
-          data: { status: TableStatus.AVAILABLE },
-        });
-      }
-
-      return res;
-    });
-
-    realtimeDispatcher.broadcast("table:updated", updated);
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, error: "Reservation not found" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({ success: true, reservation: updated });
   } catch (error: any) {

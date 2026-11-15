@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { dataStore } from "@/lib/data-store";
 import { UpdateTableStatusSchema } from "@/lib/validations";
 import { realtimeDispatcher } from "@/lib/events";
 
@@ -7,31 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const tables = await prisma.table.findMany({
-      orderBy: { tableNumber: "asc" },
-      include: {
-        orders: {
-          where: {
-            status: { in: ["PENDING", "PREPARING", "READY"] },
-          },
-          select: {
-            id: true,
-            orderNumber: true,
-            status: true,
-            customerName: true,
-            total: true,
-            createdAt: true,
-          },
-        },
-        reservations: {
-          where: {
-            status: { in: ["CONFIRMED", "SEATED"] },
-          },
-          orderBy: { timeSlot: "asc" },
-        },
-      },
-    });
-
+    const tables = dataStore.getTables();
     return NextResponse.json({ success: true, tables });
   } catch (error: any) {
     return NextResponse.json(
@@ -47,12 +23,18 @@ export async function PATCH(req: NextRequest) {
     const { tableId, status } = body;
     const validated = UpdateTableStatusSchema.parse({ status });
 
-    const updated = await prisma.table.update({
-      where: { id: tableId },
-      data: { status: validated.status },
-    });
+    const updated = dataStore.updateTableStatus(tableId, validated.status);
 
-    realtimeDispatcher.broadcast("table:updated", updated);
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, error: "Table not found" },
+        { status: 404 }
+      );
+    }
+
+    try {
+      realtimeDispatcher.broadcast("table:updated", updated);
+    } catch {}
 
     return NextResponse.json({ success: true, table: updated });
   } catch (error: any) {
