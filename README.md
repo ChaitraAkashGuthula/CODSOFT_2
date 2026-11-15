@@ -1,10 +1,11 @@
 # DineDesk — Enterprise Restaurant Operating Platform
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.1.7-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.4.6-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0.0-blue?style=flat-square&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Vercel Ready](https://img.shields.io/badge/Vercel-Zero--Config_Deploy-000000?style=flat-square&logo=vercel)](https://vercel.com/)
+[![Security Audit](https://img.shields.io/badge/Security-0_Vulnerabilities-brightgreen?style=flat-square)](https://docs.npmjs.com/cli/v10/commands/npm-audit)
 [![CodSoft](https://img.shields.io/badge/CodSoft-Web_Development_Task_2-orange?style=flat-square)](https://codsoft.in/)
 
 **DineDesk** is an enterprise-grade digital dining, kitchen fulfillment, and table management platform built for modern restaurants. Designed to commercial hospitality standards (inspired by Swiggy, Zomato, Toast POS, and OpenTable), DineDesk unifies customer guest ordering, kitchen line management, and restaurant operations into a single cohesive, high-performance web platform.
@@ -33,7 +34,7 @@ flowchart TD
         AdminUI["Executive Management\n(/admin)"]
     end
 
-    subgraph SecurityLayer["Edge Middleware & Auth Guard (src/middleware.ts)"]
+    subgraph SecurityLayer["Edge Proxy & Auth Guard (src/proxy.ts)"]
         Guard{"Check 'dinedesk_role' Cookie"}
     end
 

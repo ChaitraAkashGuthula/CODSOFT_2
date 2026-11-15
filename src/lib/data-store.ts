@@ -5,7 +5,7 @@ import {
   TableStatus,
   ReservationStatus,
   PaymentStatus,
-} from "@prisma/client";
+} from "@/lib/types";
 
 export interface Category {
   id: string;

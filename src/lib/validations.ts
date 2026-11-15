@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { OrderType, OrderStatus, TableStatus, ReservationStatus } from "@prisma/client";
+import { OrderType, OrderStatus, TableStatus, ReservationStatus } from "@/lib/types";
 
 export const CreateOrderItemSchema = z.object({
   menuItemId: z.string().min(1, "Menu item ID is required"),
