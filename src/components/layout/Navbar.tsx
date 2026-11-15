@@ -31,12 +31,15 @@ export function Navbar() {
 
   const [tableMenuOpen, setTableMenuOpen] = useState(false);
 
-  // Strictly hide customer navbar on Staff, Kitchen, Admin, and Login portals
+  // Strictly hide customer navbar on Staff, Kitchen, Admin, Login, and Legal portals
   if (
     pathname.startsWith("/kitchen") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/kds") ||
-    pathname.startsWith("/staff")
+    pathname.startsWith("/staff") ||
+    pathname.startsWith("/terms") ||
+    pathname.startsWith("/privacy") ||
+    pathname.startsWith("/cookies")
   ) {
     return null;
   }

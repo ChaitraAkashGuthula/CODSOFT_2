@@ -100,9 +100,21 @@ export function Footer() {
 
         {/* Bottom Sub-bar */}
         <div className="pt-6 border-t border-[#E8E8E8] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
-          <p className="text-[#93959F]">
-            © {new Date().getFullYear()} DineDesk Restaurant Platform. CodSoft Web Development Task 2.
-          </p>
+          <div className="flex flex-wrap items-center gap-3 text-[#93959F]">
+            <span>© {new Date().getFullYear()} DineDesk Restaurant Platform. CodSoft Web Development Task 2.</span>
+            <span className="hidden sm:inline">•</span>
+            <Link href="/terms" className="hover:text-[#1C1C1C] transition">
+              Terms of Service
+            </Link>
+            <span className="hidden sm:inline">•</span>
+            <Link href="/privacy" className="hover:text-[#1C1C1C] transition">
+              Privacy Policy
+            </Link>
+            <span className="hidden sm:inline">•</span>
+            <Link href="/cookies" className="hover:text-[#1C1C1C] transition">
+              Cookie Policy
+            </Link>
+          </div>
 
           {/* Subtle Staff Portal Link as instructed */}
           <Link

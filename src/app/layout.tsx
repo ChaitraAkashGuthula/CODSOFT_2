@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { CookieConsent } from "@/components/CookieConsent";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default function RootLayout({
         <main className="flex-1 bg-[#FFFFFF]">{children}</main>
         <CartDrawer />
         <Footer />
+        <CookieConsent />
       </body>
     </html>
   );
